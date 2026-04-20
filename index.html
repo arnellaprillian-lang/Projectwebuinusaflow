@@ -13,62 +13,28 @@
       box-sizing: border-box;
     }
 
-    /* Mobile first - gaya dasar */
     body {
-      background: radial-gradient(circle at 10% 20%, #001d3d, #000b17);
+      background: linear-gradient(145deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       padding: 16px 12px 32px;
-      transition: background 0.3s;
+      color: white;
     }
 
-    /* Tema terang */
-    body.light {
-      background: #f0f4f8;
-    }
-    body.light .card {
-      background: rgba(255, 255, 255, 0.9);
-      border: 1px solid rgba(0, 0, 0, 0.1);
-      color: #1e293b;
-    }
-    body.light .sensor-item {
-      background: rgba(0, 0, 0, 0.05);
-      color: #1e293b;
-    }
-    body.light .btn-outline {
-      background: rgba(0, 0, 0, 0.05);
-      color: #1e293b;
-    }
-    body.light .log-item {
-      border-bottom-color: rgba(0, 0, 0, 0.1);
-    }
-    body.light .product-card {
-      background: rgba(0, 0, 0, 0.05);
-      color: #1e293b;
-    }
-    body.light input, body.light select {
-      background: white !important;
-      color: #1e293b !important;
-      border: 1px solid #ccc;
-    }
-    body.light input::placeholder {
-      color: #888;
-    }
-
-    /* Container selalu penuh */
+    /* Container full width */
     .container {
       width: 100%;
       max-width: 100%;
       margin: 0 auto;
     }
 
-    /* Card glassmorphism */
+    /* Card glassmorphism ungu transparan */
     .card {
-      background: rgba(20, 35, 60, 0.6);
+      background: rgba(30, 40, 70, 0.55);
       backdrop-filter: blur(20px);
-      border-radius: 24px;
-      border: 0.5px solid rgba(59, 130, 246, 0.3);
+      border-radius: 28px;
+      border: 0.5px solid rgba(150, 120, 255, 0.4);
       transition: all 0.25s ease;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
       padding: 18px;
       margin-bottom: 16px;
     }
@@ -82,8 +48,20 @@
       margin-bottom: 20px;
       gap: 12px;
     }
+    .header h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #c084fc, #a855f7);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .header p {
+      font-size: 0.7rem;
+      opacity: 0.7;
+    }
 
-    /* Tombol */
+    /* Tombol umum */
     button {
       background: rgba(255, 255, 255, 0.12);
       border: none;
@@ -96,22 +74,76 @@
       cursor: pointer;
     }
     button:active { transform: scale(0.96); }
-    .btn-primary { background: #007aff; }
-    .btn-danger { background: #ff3b30; }
-    .btn-warning { background: #ff9500; }
+    .btn-primary { background: #7c3aed; }
+    .btn-danger { background: #dc2626; }
+    .btn-warning { background: #f59e0b; }
     .emergency { animation: pulse 1s infinite; }
     @keyframes pulse {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.5); }
-      50% { box-shadow: 0 0 0 6px rgba(255, 59, 48, 0); }
+      0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.5); }
+      50% { box-shadow: 0 0 0 6px rgba(220, 38, 38, 0); }
     }
 
-    /* Mode button aktif (merah solid) */
-    .mode-active {
-      background: #dc2626 !important;
-      color: white !important;
+    /* Toggle switch (model slide) */
+    .toggle-group {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .toggle-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 6px 14px;
+      border-radius: 40px;
+    }
+    .toggle-item span {
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 48px;
+      height: 24px;
+    }
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(255,255,255,0.3);
+      transition: 0.3s;
+      border-radius: 34px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: 0.3s;
+      border-radius: 50%;
+    }
+    input:checked + .slider {
+      background-color: #7c3aed;
+    }
+    input:checked + .slider:before {
+      transform: translateX(24px);
     }
 
-    /* Grid sensor 2 kolom di HP, 4 kolom di tablet ke atas */
+    /* Sensor grid */
     .sensor-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -122,7 +154,7 @@
       .sensor-grid { grid-template-columns: repeat(4, 1fr); }
     }
     .sensor-item {
-      background: rgba(0, 0, 0, 0.25);
+      background: rgba(0, 0, 0, 0.3);
       border-radius: 20px;
       padding: 10px 6px;
       text-align: center;
@@ -134,7 +166,7 @@
       margin-top: 4px;
     }
 
-    /* Katalog produk - grid rapi */
+    /* Katalog produk grid */
     .product-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
@@ -188,14 +220,14 @@
       to { opacity: 1; transform: translateX(0); }
     }
 
-    /* Loading screen */
+    /* Loading */
     .loading-screen {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: linear-gradient(135deg, #001d3d, #000b17);
+      background: linear-gradient(145deg, #1a1a2e, #0f3460);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -214,11 +246,11 @@
     .loading-progress {
       width: 0%;
       height: 100%;
-      background: linear-gradient(90deg, #3b82f6, #00b4ff);
+      background: linear-gradient(90deg, #a855f7, #7c3aed);
       transition: width 0.2s;
     }
 
-    /* Animasi blink untuk alarm */
+    /* Alarm blink */
     .blink-red {
       animation: blink 0.5s step-end infinite alternate;
     }
@@ -229,7 +261,7 @@
 
     /* Input & select */
     input, select {
-      background: rgba(0, 0, 0, 0.3);
+      background: rgba(0, 0, 0, 0.4);
       border: none;
       border-radius: 40px;
       padding: 8px 12px;
@@ -238,11 +270,7 @@
     }
     input:focus, select:focus { outline: none; }
 
-    /* Ikon di header */
-    .header h1 { font-size: 1.6rem; font-weight: 700; }
-    .header p { font-size: 0.65rem; opacity: 0.7; }
-
-    /* Tombol aksi dalam satu baris */
+    /* Action buttons */
     .action-buttons {
       display: flex;
       gap: 10px;
@@ -255,7 +283,7 @@
 
 <div id="loading" class="loading-screen">
   <div class="loading-content">
-    <div style="font-size:2.2rem; font-weight:800;">NUSA<span style="color:#3b82f6;">FLOW</span></div>
+    <div style="font-size:2.2rem; font-weight:800;">NUSA<span style="color:#a855f7;">FLOW</span></div>
     <div style="font-size:0.7rem; opacity:0.7;">Koi Pond RDF System</div>
     <div class="loading-bar"><div id="loadProgress" class="loading-progress"></div></div>
     <div style="margin-top:8px;" id="loadPercent">0%</div>
@@ -309,8 +337,7 @@
       tempHistory: Array(20).fill(26.5),
       phHistory: Array(20).fill(7.2),
       voltHistory: Array(20).fill(12.3),
-      darkMode: true,
-      espConnected: false  // simulasi koneksi
+      espConnected: true
     };
 
     let chart = null;
@@ -364,10 +391,10 @@
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          plugins: { legend: { position: 'top', labels: { color: state.darkMode ? '#fff' : '#333' } } },
+          plugins: { legend: { position: 'top', labels: { color: '#fff' } } },
           scales: {
-            y: { title: { display: true, text: 'Suhu/Tegangan', color: state.darkMode ? '#aaa' : '#666' }, ticks: { color: state.darkMode ? '#ddd' : '#333' } },
-            y1: { position: 'right', title: { text: 'pH', color: state.darkMode ? '#aaa' : '#666' }, ticks: { color: state.darkMode ? '#ddd' : '#333' } }
+            y: { title: { display: true, text: 'Suhu/Tegangan', color: '#aaa' }, ticks: { color: '#ddd' } },
+            y1: { position: 'right', title: { text: 'pH', color: '#aaa' }, ticks: { color: '#ddd' } }
           }
         }
       });
@@ -385,8 +412,6 @@
     // ========== SIMULASI SENSOR ==========
     function startSensorSim() {
       if (sensorInterval) clearInterval(sensorInterval);
-      // Tampilkan indikator loading data (opsional)
-      addNotif('Memulai pembacaan sensor...', 'info');
       sensorInterval = setInterval(() => {
         // Level air
         let newLevel = state.waterLevel;
@@ -465,12 +490,12 @@
       const container = document.getElementById('logContainer');
       if (!container) return;
       if (state.logs.length === 0) { container.innerHTML = '<div class="text-center opacity-50 py-3">Belum ada aktivitas</div>'; return; }
-      container.innerHTML = state.logs.map(l => `<div class="log-item"><span style="color:#3b82f6; width:65px;">${l.time}</span><span style="font-weight:600; width:80px;">${l.action}:</span><span>${l.detail}</span></div>`).join('');
+      container.innerHTML = state.logs.map(l => `<div class="log-item"><span style="color:#a855f7; width:65px;">${l.time}</span><span style="font-weight:600; width:80px;">${l.action}:</span><span>${l.detail}</span></div>`).join('');
     }
     function updateNotifUI() {
       const container = document.getElementById('notifContainer');
       if (!container) return;
-      container.innerHTML = state.notifications.map(n => `<div class="toast" style="border-left-color: ${n.type==='error'?'#ef4444':n.type==='success'?'#22c55e':'#3b82f6'}"><i class="fas ${n.type==='error'?'fa-exclamation-triangle':n.type==='success'?'fa-check-circle':'fa-info-circle'}"></i> ${n.msg}</div>`).join('');
+      container.innerHTML = state.notifications.map(n => `<div class="toast" style="border-left-color: ${n.type==='error'?'#ef4444':n.type==='success'?'#22c55e':'#a855f7'}"><i class="fas ${n.type==='error'?'fa-exclamation-triangle':n.type==='success'?'fa-check-circle':'fa-info-circle'}"></i> ${n.msg}</div>`).join('');
     }
     function updateUI() {
       // Status RDF
@@ -479,18 +504,16 @@
         rdfStatus.innerText = state.rdfOn ? 'BERJALAN' : 'BERHENTI';
         rdfStatus.className = `px-3 py-1 rounded-full text-xs font-bold ${state.rdfOn ? 'bg-green-500/40' : 'bg-red-500/40'}`;
       }
-      // Tombol RDF (ubah teks)
+      // Tombol RDF
       const rdfBtn = document.getElementById('toggleRdfBtn');
       if (rdfBtn) {
         rdfBtn.innerHTML = `<i class="fas ${state.rdfOn ? 'fa-stop-circle' : 'fa-play-circle'}"></i> ${state.rdfOn ? 'Matikan RDF' : 'Nyalakan RDF'}`;
       }
-      // Mode buttons (warna merah jika aktif)
-      const pumpBtn = document.getElementById('btnPumpOnly');
-      const drumBtn = document.getElementById('btnDrumOnly');
-      const normalBtn = document.getElementById('btnNormal');
-      if (pumpBtn) { if (state.pumpOnly) pumpBtn.classList.add('mode-active'); else pumpBtn.classList.remove('mode-active'); }
-      if (drumBtn) { if (state.drumOnly) drumBtn.classList.add('mode-active'); else drumBtn.classList.remove('mode-active'); }
-      if (normalBtn) { if (!state.pumpOnly && !state.drumOnly) normalBtn.classList.add('mode-active'); else normalBtn.classList.remove('mode-active'); }
+      // Toggle switches
+      const pumpToggle = document.getElementById('pumpOnlyToggle');
+      const drumToggle = document.getElementById('drumOnlyToggle');
+      if (pumpToggle) pumpToggle.checked = state.pumpOnly;
+      if (drumToggle) drumToggle.checked = state.drumOnly;
       // Aerator & UV
       const aeratorBtn = document.getElementById('aeratorBtn');
       const uvBtn = document.getElementById('uvBtn');
@@ -510,10 +533,9 @@
         else if (state.schedules.length > 0) modeInfo.innerText = 'Scheduled';
         else modeInfo.innerText = 'Manual';
       }
-      // Indikator koneksi ESP32 (simulasi)
+      // Koneksi
       const connStatus = document.getElementById('connStatus');
       if (connStatus) {
-        state.espConnected = true; // simulasi selalu online
         connStatus.innerHTML = `<i class="fas fa-circle" style="color: #22c55e; font-size: 0.6rem;"></i> Online`;
       }
     }
@@ -529,15 +551,36 @@
     }
     function setPumpOnly(enable) {
       state.pumpOnly = enable;
-      if (enable) { state.drumOnly = false; state.rdfOn = false; addLog('Mode', 'Pump Only aktif'); addNotif('Mode Pump Only', 'info'); }
+      if (enable) {
+        state.drumOnly = false;
+        state.rdfOn = false;
+        addLog('Mode', 'Pump Only aktif');
+        addNotif('Mode Pump Only', 'info');
+      }
       updateUI();
+      // update toggle lain
+      const drumToggle = document.getElementById('drumOnlyToggle');
+      if (drumToggle) drumToggle.checked = state.drumOnly;
     }
     function setDrumOnly(enable) {
       state.drumOnly = enable;
-      if (enable) { state.pumpOnly = false; state.rdfOn = true; addLog('Mode', 'Drum Only aktif'); addNotif('Mode Drum Only', 'info'); }
+      if (enable) {
+        state.pumpOnly = false;
+        state.rdfOn = true;
+        addLog('Mode', 'Drum Only aktif');
+        addNotif('Mode Drum Only', 'info');
+      }
+      updateUI();
+      const pumpToggle = document.getElementById('pumpOnlyToggle');
+      if (pumpToggle) pumpToggle.checked = state.pumpOnly;
+    }
+    function setNormalMode() {
+      state.pumpOnly = false;
+      state.drumOnly = false;
+      addLog('Mode', 'Mode Normal');
+      addNotif('Mode Normal', 'info');
       updateUI();
     }
-    function setNormalMode() { state.pumpOnly = false; state.drumOnly = false; addLog('Mode', 'Mode Normal'); addNotif('Mode Normal', 'info'); updateUI(); }
     function toggleAerator() { state.aeratorOn = !state.aeratorOn; addLog('Aerator', state.aeratorOn ? 'ON' : 'OFF'); addNotif(`Aerator ${state.aeratorOn?'ON':'OFF'}`); updateUI(); }
     function toggleUV() { state.uvOn = !state.uvOn; addLog('UV Lamp', state.uvOn ? 'ON' : 'OFF'); addNotif(`UV Lamp ${state.uvOn?'ON':'OFF'}`); updateUI(); }
     function emergencyStop() {
@@ -629,40 +672,14 @@
       }, 60000);
     }
 
-    // ========== TEMA ==========
-    function toggleTheme() {
-      state.darkMode = !state.darkMode;
-      const body = document.body;
-      if (state.darkMode) {
-        body.classList.remove('light');
-      } else {
-        body.classList.add('light');
-      }
-      // Update chart
-      if (chart) {
-        chart.options.plugins.legend.labels.color = state.darkMode ? '#fff' : '#333';
-        chart.options.scales.y.title.color = state.darkMode ? '#aaa' : '#666';
-        chart.options.scales.y.ticks.color = state.darkMode ? '#ddd' : '#333';
-        chart.options.scales.y1.title.color = state.darkMode ? '#aaa' : '#666';
-        chart.options.scales.y1.ticks.color = state.darkMode ? '#ddd' : '#333';
-        chart.update();
-      }
-      // Ganti ikon tema
-      const themeIcon = document.querySelector('#themeBtn i');
-      if (themeIcon) themeIcon.className = `fas ${state.darkMode ? 'fa-sun' : 'fa-moon'}`;
-    }
-
-    // ========== RENDER UI (Mobile first) ==========
+    // ========== RENDER UI ==========
     function render() {
       const app = document.getElementById('app');
       app.innerHTML = `
         <div class="container">
           <div class="header">
             <div><h1>NusaFlow Koi</h1><p>RDF Smart Control System</p></div>
-            <div style="display:flex; gap:10px;">
-              <button id="emergencyBtn" class="emergency btn-danger" style="padding:8px 14px;"><i class="fas fa-exclamation-triangle"></i> STOP</button>
-              <button id="themeBtn" style="background:rgba(255,255,255,0.15);"><i class="fas fa-sun"></i></button>
-            </div>
+            <button id="emergencyBtn" class="emergency btn-danger" style="padding:8px 14px;"><i class="fas fa-exclamation-triangle"></i> STOP</button>
           </div>
 
           <!-- RDF Control -->
@@ -675,15 +692,26 @@
             <button id="toggleRdfBtn" class="btn-primary" style="width:100%;"><i class="fas fa-play-circle"></i> Nyalakan RDF</button>
           </div>
 
-          <!-- Mode Operasi -->
+          <!-- Mode Operasi dengan Toggle Switch -->
           <div class="card">
             <h3 style="margin-bottom:12px;"><i class="fas fa-sliders-h"></i> Mode Operasi</h3>
-            <div style="display:flex; gap:8px; margin-bottom:12px;">
-              <button id="btnPumpOnly" style="flex:1;"><i class="fas fa-tint"></i> Pump Only</button>
-              <button id="btnDrumOnly" style="flex:1;"><i class="fas fa-cogs"></i> Drum Only</button>
-              <button id="btnNormal" style="flex:1;"><i class="fas fa-sync-alt"></i> Normal</button>
+            <div class="toggle-group">
+              <div class="toggle-item">
+                <span>Pump Only</span>
+                <label class="switch">
+                  <input type="checkbox" id="pumpOnlyToggle">
+                  <span class="slider"></span>
+                </label>
+              </div>
+              <div class="toggle-item">
+                <span>Drum Only</span>
+                <label class="switch">
+                  <input type="checkbox" id="drumOnlyToggle">
+                  <span class="slider"></span>
+                </label>
+              </div>
             </div>
-            <div class="text-xs opacity-80">Mode aktif: <span id="modeInfo">Manual</span></div>
+            <div class="text-xs opacity-80 text-center mt-2">Mode aktif: <span id="modeInfo">Manual</span></div>
           </div>
 
           <!-- Timer Schedule -->
@@ -693,7 +721,7 @@
               <input type="number" id="scheduleHour" placeholder="Jam" style="width:70px;">
               <input type="number" id="scheduleMinute" placeholder="Menit" style="width:70px;">
               <select id="scheduleAction" style="width:70px;"><option value="on">ON</option><option value="off">OFF</option></select>
-              <button id="addScheduleBtn" class="bg-blue-500 px-3 rounded-full">+</button>
+              <button id="addScheduleBtn" class="bg-purple-600 px-3 rounded-full">+</button>
             </div>
             <div id="scheduleList" class="max-h-32 overflow-y-auto"></div>
             <button id="clearSchedulesBtn" class="text-xs text-red-300 mt-2">Hapus Semua Jadwal</button>
@@ -759,13 +787,11 @@
         <div id="notifContainer"></div>
       `;
 
-      // Pasang event listener
+      // Event listeners
       document.getElementById('toggleRdfBtn')?.addEventListener('click', toggleRdf);
-      document.getElementById('btnPumpOnly')?.addEventListener('click', () => setPumpOnly(true));
-      document.getElementById('btnDrumOnly')?.addEventListener('click', () => setDrumOnly(true));
-      document.getElementById('btnNormal')?.addEventListener('click', setNormalMode);
+      document.getElementById('pumpOnlyToggle')?.addEventListener('change', (e) => setPumpOnly(e.target.checked));
+      document.getElementById('drumOnlyToggle')?.addEventListener('change', (e) => setDrumOnly(e.target.checked));
       document.getElementById('emergencyBtn')?.addEventListener('click', emergencyStop);
-      document.getElementById('themeBtn')?.addEventListener('click', toggleTheme);
       document.getElementById('aeratorBtn')?.addEventListener('click', toggleAerator);
       document.getElementById('uvBtn')?.addEventListener('click', toggleUV);
       document.getElementById('resetBtn')?.addEventListener('click', resetSystem);
