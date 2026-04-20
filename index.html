@@ -3,22 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
-  <title>NusaFlow Koi | RDF Control System</title>
+  <title>NusaFlow Koi | RDF Control</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Mobile first - gaya dasar */
     body {
       background: radial-gradient(circle at 10% 20%, #001d3d, #000b17);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      padding: 20px 16px 40px;
+      padding: 16px 12px 32px;
       transition: background 0.3s;
     }
+
+    /* Tema terang */
     body.light {
       background: #f0f4f8;
     }
     body.light .card {
-      background: rgba(255, 255, 255, 0.85);
+      background: rgba(255, 255, 255, 0.9);
       border: 1px solid rgba(0, 0, 0, 0.1);
       color: #1e293b;
     }
@@ -37,39 +45,53 @@
       background: rgba(0, 0, 0, 0.05);
       color: #1e293b;
     }
-    /* Container */
+    body.light input, body.light select {
+      background: white !important;
+      color: #1e293b !important;
+      border: 1px solid #ccc;
+    }
+    body.light input::placeholder {
+      color: #888;
+    }
+
+    /* Container selalu penuh */
     .container {
-      max-width: 1200px;
+      width: 100%;
+      max-width: 100%;
       margin: 0 auto;
     }
+
     /* Card glassmorphism */
     .card {
       background: rgba(20, 35, 60, 0.6);
       backdrop-filter: blur(20px);
-      border-radius: 28px;
+      border-radius: 24px;
       border: 0.5px solid rgba(59, 130, 246, 0.3);
       transition: all 0.25s ease;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      padding: 18px;
+      margin-bottom: 16px;
     }
+
     /* Header */
     .header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
       gap: 12px;
     }
+
     /* Tombol */
     button {
       background: rgba(255, 255, 255, 0.12);
       border: none;
       border-radius: 40px;
-      padding: 10px 18px;
+      padding: 10px 16px;
       color: white;
       font-weight: 500;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       transition: all 0.2s ease;
       cursor: pointer;
     }
@@ -80,84 +102,93 @@
     .emergency { animation: pulse 1s infinite; }
     @keyframes pulse {
       0%, 100% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.5); }
-      50% { box-shadow: 0 0 0 8px rgba(255, 59, 48, 0); }
+      50% { box-shadow: 0 0 0 6px rgba(255, 59, 48, 0); }
     }
-    /* Mode button active (merah) */
+
+    /* Mode button aktif (merah solid) */
     .mode-active {
       background: #dc2626 !important;
       color: white !important;
     }
-    /* Sensor grid */
+
+    /* Grid sensor 2 kolom di HP, 4 kolom di tablet ke atas */
     .sensor-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
+      gap: 10px;
+      margin-bottom: 16px;
     }
-    @media (min-width: 500px) {
+    @media (min-width: 480px) {
       .sensor-grid { grid-template-columns: repeat(4, 1fr); }
     }
     .sensor-item {
       background: rgba(0, 0, 0, 0.25);
       border-radius: 20px;
-      padding: 12px 8px;
+      padding: 10px 6px;
       text-align: center;
       transition: 0.2s;
     }
     .sensor-value {
-      font-size: 1.5rem;
+      font-size: clamp(1.2rem, 6vw, 1.5rem);
       font-weight: 700;
       margin-top: 4px;
     }
-    /* Katalog produk - grid biasa (tidak slide) */
+
+    /* Katalog produk - grid rapi */
     .product-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 12px;
       margin-top: 8px;
     }
     .product-card {
       background: rgba(0, 0, 0, 0.3);
-      border-radius: 24px;
-      padding: 12px;
+      border-radius: 20px;
+      padding: 12px 8px;
       text-align: center;
       cursor: pointer;
       transition: 0.2s;
     }
     .product-card:active { transform: scale(0.96); }
+
     /* Log area */
     .log-area {
-      max-height: 200px;
+      max-height: 180px;
       overflow-y: auto;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
     }
     .log-item {
       border-bottom: 1px solid rgba(255,255,255,0.1);
-      padding: 8px 0;
+      padding: 6px 0;
       display: flex;
-      gap: 12px;
+      gap: 8px;
     }
-    /* Toast */
+
+    /* Toast notifikasi */
     .toast {
       position: fixed;
-      bottom: 20px;
-      right: 20px;
+      bottom: 16px;
+      right: 16px;
+      left: auto;
       background: rgba(0,0,0,0.85);
       backdrop-filter: blur(12px);
       border-radius: 30px;
-      padding: 10px 18px;
+      padding: 8px 16px;
       display: flex;
       align-items: center;
-      gap: 10px;
-      font-size: 0.8rem;
+      gap: 8px;
+      font-size: 0.75rem;
       z-index: 1000;
       animation: slideIn 0.3s ease;
       border-left: 3px solid;
+      max-width: 85%;
     }
     @keyframes slideIn {
       from { opacity: 0; transform: translateX(100px); }
       to { opacity: 1; transform: translateX(0); }
     }
-    /* Loading */
+
+    /* Loading screen */
     .loading-screen {
       position: fixed;
       top: 0;
@@ -173,8 +204,8 @@
     }
     .loading-content { text-align: center; }
     .loading-bar {
-      width: 220px;
-      height: 5px;
+      width: 200px;
+      height: 4px;
       background: rgba(255,255,255,0.2);
       border-radius: 10px;
       margin-top: 20px;
@@ -186,6 +217,8 @@
       background: linear-gradient(90deg, #3b82f6, #00b4ff);
       transition: width 0.2s;
     }
+
+    /* Animasi blink untuk alarm */
     .blink-red {
       animation: blink 0.5s step-end infinite alternate;
     }
@@ -193,13 +226,36 @@
       from { background: rgba(239,68,68,0.3); border-color: #ef4444; }
       to { background: rgba(239,68,68,0.8); border-color: #dc2626; }
     }
+
+    /* Input & select */
+    input, select {
+      background: rgba(0, 0, 0, 0.3);
+      border: none;
+      border-radius: 40px;
+      padding: 8px 12px;
+      color: white;
+      font-size: 0.8rem;
+    }
+    input:focus, select:focus { outline: none; }
+
+    /* Ikon di header */
+    .header h1 { font-size: 1.6rem; font-weight: 700; }
+    .header p { font-size: 0.65rem; opacity: 0.7; }
+
+    /* Tombol aksi dalam satu baris */
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .action-buttons button { flex: 1; }
   </style>
 </head>
 <body>
 
 <div id="loading" class="loading-screen">
   <div class="loading-content">
-    <div style="font-size:2.5rem; font-weight:800;">NUSA<span style="color:#3b82f6;">FLOW</span></div>
+    <div style="font-size:2.2rem; font-weight:800;">NUSA<span style="color:#3b82f6;">FLOW</span></div>
     <div style="font-size:0.7rem; opacity:0.7;">Koi Pond RDF System</div>
     <div class="loading-bar"><div id="loadProgress" class="loading-progress"></div></div>
     <div style="margin-top:8px;" id="loadPercent">0%</div>
@@ -253,14 +309,15 @@
       tempHistory: Array(20).fill(26.5),
       phHistory: Array(20).fill(7.2),
       voltHistory: Array(20).fill(12.3),
-      darkMode: true
+      darkMode: true,
+      espConnected: false  // simulasi koneksi
     };
 
     let chart = null;
     let sensorInterval = null;
     let scheduleInterval = null;
 
-    // Helper functions
+    // ========== HELPER ==========
     function addLog(action, detail) {
       const time = new Date().toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
       state.logs = [{ id: Date.now(), time, action, detail }, ...state.logs].slice(0, 50);
@@ -291,7 +348,7 @@
       } catch(e) {}
     }
 
-    // Chart
+    // ========== CHART ==========
     function initChart() {
       const ctx = document.getElementById('trendChart').getContext('2d');
       chart = new Chart(ctx, {
@@ -308,7 +365,10 @@
           responsive: true,
           maintainAspectRatio: false,
           plugins: { legend: { position: 'top', labels: { color: state.darkMode ? '#fff' : '#333' } } },
-          scales: { y: { title: { display: true, text: 'Suhu/Tegangan', color: state.darkMode ? '#aaa' : '#666' } }, y1: { position: 'right', title: { text: 'pH', color: state.darkMode ? '#aaa' : '#666' } } }
+          scales: {
+            y: { title: { display: true, text: 'Suhu/Tegangan', color: state.darkMode ? '#aaa' : '#666' }, ticks: { color: state.darkMode ? '#ddd' : '#333' } },
+            y1: { position: 'right', title: { text: 'pH', color: state.darkMode ? '#aaa' : '#666' }, ticks: { color: state.darkMode ? '#ddd' : '#333' } }
+          }
         }
       });
     }
@@ -322,9 +382,11 @@
       if (chart) chart.update();
     }
 
-    // Simulasi sensor
+    // ========== SIMULASI SENSOR ==========
     function startSensorSim() {
       if (sensorInterval) clearInterval(sensorInterval);
+      // Tampilkan indikator loading data (opsional)
+      addNotif('Memulai pembacaan sensor...', 'info');
       sensorInterval = setInterval(() => {
         // Level air
         let newLevel = state.waterLevel;
@@ -402,8 +464,8 @@
     function updateLogUI() {
       const container = document.getElementById('logContainer');
       if (!container) return;
-      if (state.logs.length === 0) { container.innerHTML = '<div class="text-center opacity-50 py-4">Belum ada aktivitas</div>'; return; }
-      container.innerHTML = state.logs.map(l => `<div class="log-item"><span style="color:#3b82f6; width:70px;">${l.time}</span><span style="font-weight:600; width:85px;">${l.action}:</span><span>${l.detail}</span></div>`).join('');
+      if (state.logs.length === 0) { container.innerHTML = '<div class="text-center opacity-50 py-3">Belum ada aktivitas</div>'; return; }
+      container.innerHTML = state.logs.map(l => `<div class="log-item"><span style="color:#3b82f6; width:65px;">${l.time}</span><span style="font-weight:600; width:80px;">${l.action}:</span><span>${l.detail}</span></div>`).join('');
     }
     function updateNotifUI() {
       const container = document.getElementById('notifContainer');
@@ -411,28 +473,24 @@
       container.innerHTML = state.notifications.map(n => `<div class="toast" style="border-left-color: ${n.type==='error'?'#ef4444':n.type==='success'?'#22c55e':'#3b82f6'}"><i class="fas ${n.type==='error'?'fa-exclamation-triangle':n.type==='success'?'fa-check-circle':'fa-info-circle'}"></i> ${n.msg}</div>`).join('');
     }
     function updateUI() {
-      // RDF status
+      // Status RDF
       const rdfStatus = document.getElementById('rdfStatus');
       if (rdfStatus) {
         rdfStatus.innerText = state.rdfOn ? 'BERJALAN' : 'BERHENTI';
         rdfStatus.className = `px-3 py-1 rounded-full text-xs font-bold ${state.rdfOn ? 'bg-green-500/40' : 'bg-red-500/40'}`;
       }
+      // Tombol RDF (ubah teks)
+      const rdfBtn = document.getElementById('toggleRdfBtn');
+      if (rdfBtn) {
+        rdfBtn.innerHTML = `<i class="fas ${state.rdfOn ? 'fa-stop-circle' : 'fa-play-circle'}"></i> ${state.rdfOn ? 'Matikan RDF' : 'Nyalakan RDF'}`;
+      }
       // Mode buttons (warna merah jika aktif)
       const pumpBtn = document.getElementById('btnPumpOnly');
       const drumBtn = document.getElementById('btnDrumOnly');
       const normalBtn = document.getElementById('btnNormal');
-      if (pumpBtn) {
-        if (state.pumpOnly) pumpBtn.classList.add('mode-active');
-        else pumpBtn.classList.remove('mode-active');
-      }
-      if (drumBtn) {
-        if (state.drumOnly) drumBtn.classList.add('mode-active');
-        else drumBtn.classList.remove('mode-active');
-      }
-      if (normalBtn) {
-        if (!state.pumpOnly && !state.drumOnly) normalBtn.classList.add('mode-active');
-        else normalBtn.classList.remove('mode-active');
-      }
+      if (pumpBtn) { if (state.pumpOnly) pumpBtn.classList.add('mode-active'); else pumpBtn.classList.remove('mode-active'); }
+      if (drumBtn) { if (state.drumOnly) drumBtn.classList.add('mode-active'); else drumBtn.classList.remove('mode-active'); }
+      if (normalBtn) { if (!state.pumpOnly && !state.drumOnly) normalBtn.classList.add('mode-active'); else normalBtn.classList.remove('mode-active'); }
       // Aerator & UV
       const aeratorBtn = document.getElementById('aeratorBtn');
       const uvBtn = document.getElementById('uvBtn');
@@ -444,6 +502,7 @@
         uvBtn.innerHTML = `<i class="fas fa-sun"></i> UV Lamp ${state.uvOn?'ON':'OFF'}`;
         uvBtn.classList.toggle('bg-purple-600', state.uvOn);
       }
+      // Mode info
       const modeInfo = document.getElementById('modeInfo');
       if (modeInfo) {
         if (state.pumpOnly) modeInfo.innerText = 'Pump Only';
@@ -451,9 +510,15 @@
         else if (state.schedules.length > 0) modeInfo.innerText = 'Scheduled';
         else modeInfo.innerText = 'Manual';
       }
+      // Indikator koneksi ESP32 (simulasi)
+      const connStatus = document.getElementById('connStatus');
+      if (connStatus) {
+        state.espConnected = true; // simulasi selalu online
+        connStatus.innerHTML = `<i class="fas fa-circle" style="color: #22c55e; font-size: 0.6rem;"></i> Online`;
+      }
     }
 
-    // Kontrol (simulasi, nanti ganti dengan WebSocket)
+    // ========== KONTROL ==========
     function toggleRdf() {
       if (state.pumpOnly) setPumpOnly(false);
       if (state.drumOnly) setDrumOnly(false);
@@ -476,14 +541,18 @@
     function toggleAerator() { state.aeratorOn = !state.aeratorOn; addLog('Aerator', state.aeratorOn ? 'ON' : 'OFF'); addNotif(`Aerator ${state.aeratorOn?'ON':'OFF'}`); updateUI(); }
     function toggleUV() { state.uvOn = !state.uvOn; addLog('UV Lamp', state.uvOn ? 'ON' : 'OFF'); addNotif(`UV Lamp ${state.uvOn?'ON':'OFF'}`); updateUI(); }
     function emergencyStop() {
-      state.rdfOn = false; state.pumpOnly = false; state.drumOnly = false; state.aeratorOn = false; state.uvOn = false;
-      addLog('EMERGENCY', 'Semua perangkat dimatikan!'); addNotif('🚨 EMERGENCY STOP', 'error'); beep(); updateUI();
+      if (confirm("⚠️ EMERGENCY STOP! Semua perangkat akan dimatikan. Lanjutkan?")) {
+        state.rdfOn = false; state.pumpOnly = false; state.drumOnly = false; state.aeratorOn = false; state.uvOn = false;
+        addLog('EMERGENCY', 'Semua perangkat dimatikan!'); addNotif('🚨 EMERGENCY STOP', 'error'); beep(); updateUI();
+      }
     }
     function resetSystem() {
-      state.rdfOn = false; state.pumpOnly = false; state.drumOnly = false; state.aeratorOn = false; state.uvOn = false;
-      state.schedules = [];
-      addLog('System', 'Reset semua parameter'); addNotif('System direset', 'success');
-      updateUI(); updateScheduleUI();
+      if (confirm("Reset semua pengaturan ke default. Lanjutkan?")) {
+        state.rdfOn = false; state.pumpOnly = false; state.drumOnly = false; state.aeratorOn = false; state.uvOn = false;
+        state.schedules = [];
+        addLog('System', 'Reset semua parameter'); addNotif('System direset', 'success');
+        updateUI(); updateScheduleUI();
+      }
     }
     function exportLogs() {
       if (state.logs.length === 0) { addNotif('Tidak ada log', 'info'); return; }
@@ -508,8 +577,12 @@
       addLog('Settings', 'Threshold diperbarui'); addNotif('Threshold disimpan', 'success');
     }
 
-    // Schedule
+    // ========== SCHEDULE ==========
     function addSchedule(hour, minute, onOff) {
+      if (isNaN(hour) || isNaN(minute) || hour<0 || hour>23 || minute<0 || minute>59) {
+        addNotif('Jam atau menit tidak valid', 'error');
+        return;
+      }
       state.schedules.push({ id: Date.now(), hour, minute, onOff });
       addLog('Schedule', `Jadwal ${hour}:${minute} RDF ${onOff?'ON':'OFF'}`);
       updateScheduleUI();
@@ -539,7 +612,7 @@
       const hour = parseInt(document.getElementById('scheduleHour').value);
       const min = parseInt(document.getElementById('scheduleMinute').value);
       const onOff = document.getElementById('scheduleAction').value === 'on';
-      if (!isNaN(hour) && !isNaN(min) && hour>=0 && hour<=23 && min>=0 && min<=59) addSchedule(hour, min, onOff);
+      addSchedule(hour, min, onOff);
     };
     function startScheduleChecker() {
       if (scheduleInterval) clearInterval(scheduleInterval);
@@ -556,7 +629,7 @@
       }, 60000);
     }
 
-    // Tema terang/gelap
+    // ========== TEMA ==========
     function toggleTheme() {
       state.darkMode = !state.darkMode;
       const body = document.body;
@@ -565,116 +638,128 @@
       } else {
         body.classList.add('light');
       }
-      // Update chart legend color
+      // Update chart
       if (chart) {
         chart.options.plugins.legend.labels.color = state.darkMode ? '#fff' : '#333';
         chart.options.scales.y.title.color = state.darkMode ? '#aaa' : '#666';
+        chart.options.scales.y.ticks.color = state.darkMode ? '#ddd' : '#333';
         chart.options.scales.y1.title.color = state.darkMode ? '#aaa' : '#666';
+        chart.options.scales.y1.ticks.color = state.darkMode ? '#ddd' : '#333';
         chart.update();
       }
+      // Ganti ikon tema
+      const themeIcon = document.querySelector('#themeBtn i');
+      if (themeIcon) themeIcon.className = `fas ${state.darkMode ? 'fa-sun' : 'fa-moon'}`;
     }
 
-    // Render UI
+    // ========== RENDER UI (Mobile first) ==========
     function render() {
       const app = document.getElementById('app');
       app.innerHTML = `
         <div class="container">
           <div class="header">
-            <div><h1 style="font-size:1.8rem; font-weight:700;">NusaFlow Koi</h1><p style="font-size:0.7rem; opacity:0.7;">RDF Smart Control System</p></div>
-            <div style="display:flex; gap:12px;"><button id="emergencyBtn" class="emergency btn-danger" style="padding:8px 16px;"><i class="fas fa-exclamation-triangle"></i> STOP</button><button id="themeBtn" style="background:rgba(255,255,255,0.15);"><i class="fas fa-sun"></i></button></div>
-          </div>
-
-          <div style="display: flex; flex-direction: column; gap: 24px;">
-            <!-- Baris pertama: kontrol kiri + sensor kanan (grid 2 kolom di desktop) -->
-            <div style="display: grid; grid-template-columns: 1fr; gap: 24px;">
-              <div style="display: grid; grid-template-columns: 1fr; gap: 20px;">
-                <!-- Kiri: Kontrol -->
-                <div style="display: flex; flex-direction: column; gap: 20px;">
-                  <div class="card">
-                    <h3 style="margin-bottom:12px;"><i class="fas fa-water-pump"></i> RDF Drum Filter</h3>
-                    <div style="display:flex; justify-content:space-between; margin-bottom:20px;"><span>Status</span><span id="rdfStatus" class="px-3 py-1 rounded-full text-xs bg-red-500/40">BERHENTI</span></div>
-                    <button id="toggleRdfBtn" class="btn-primary" style="width:100%;"><i class="fas fa-power-off"></i> Nyalakan RDF</button>
-                  </div>
-
-                  <div class="card">
-                    <h3 style="margin-bottom:12px;"><i class="fas fa-sliders-h"></i> Mode Operasi</h3>
-                    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px;">
-                      <button id="btnPumpOnly" style="flex:1;"><i class="fas fa-tint"></i> Pump Only</button>
-                      <button id="btnDrumOnly" style="flex:1;"><i class="fas fa-cogs"></i> Drum Only</button>
-                      <button id="btnNormal" style="flex:1;"><i class="fas fa-sync-alt"></i> Normal</button>
-                    </div>
-                    <div class="text-xs opacity-80">Mode aktif: <span id="modeInfo">Manual</span></div>
-                  </div>
-
-                  <div class="card">
-                    <h3 style="margin-bottom:12px;"><i class="fas fa-clock"></i> Timer Otomatis</h3>
-                    <div style="display:flex; gap:8px; margin-bottom:12px;">
-                      <input type="number" id="scheduleHour" placeholder="Jam" class="bg-black/30 rounded-full px-3 py-2 text-sm w-1/3" style="border:none;">
-                      <input type="number" id="scheduleMinute" placeholder="Menit" class="bg-black/30 rounded-full px-3 py-2 text-sm w-1/3" style="border:none;">
-                      <select id="scheduleAction" class="bg-black/30 rounded-full px-2 text-sm"><option value="on">ON</option><option value="off">OFF</option></select>
-                      <button id="addScheduleBtn" class="bg-blue-500 px-3 rounded-full">+</button>
-                    </div>
-                    <div id="scheduleList" class="max-h-32 overflow-y-auto"></div>
-                    <button id="clearSchedulesBtn" class="text-xs text-red-300 mt-2">Hapus Semua Jadwal</button>
-                  </div>
-
-                  <div class="card">
-                    <h3 style="margin-bottom:12px;"><i class="fas fa-plug"></i> Perangkat Tambahan</h3>
-                    <div style="display:flex; gap:12px;">
-                      <button id="aeratorBtn" style="flex:1;"><i class="fas fa-fan"></i> Aerator OFF</button>
-                      <button id="uvBtn" style="flex:1;"><i class="fas fa-sun"></i> UV Lamp OFF</button>
-                    </div>
-                  </div>
-
-                  <button id="resetBtn" class="btn-warning" style="padding:12px;"><i class="fas fa-undo-alt"></i> Reset System</button>
-                  <button id="settingsBtn" style="background:rgba(255,255,255,0.1); padding:12px;"><i class="fas fa-cog"></i> Set Threshold Alarm</button>
-                  <button id="exportLogBtn" style="background:rgba(34,197,94,0.3); padding:12px;"><i class="fas fa-download"></i> Export Log CSV</button>
-                </div>
-
-                <!-- Kanan: Monitoring & Katalog -->
-                <div style="display: flex; flex-direction: column; gap: 20px;">
-                  <div class="sensor-grid">
-                    <div id="sensorLevelCard" class="sensor-item"><i class="fas fa-water"></i><div class="sensor-value" id="sensorLevel">MEDIUM</div><div class="text-xs">Level Air</div></div>
-                    <div id="sensorCurrentCard" class="sensor-item"><i class="fas fa-bolt"></i><div class="sensor-value" id="sensorCurrent">0.8 A</div><div class="text-xs">Arus Drum</div></div>
-                    <div class="sensor-item"><i class="fas fa-charging-station"></i><div class="sensor-value" id="sensorVoltage">12.3 V</div><div class="text-xs">Tegangan</div></div>
-                    <div class="sensor-item"><i class="fas fa-tachometer-alt"></i><div class="sensor-value" id="sensorFlow">85 L/min</div><div class="text-xs">Flow Rate</div></div>
-                    <div id="sensorTempCard" class="sensor-item"><i class="fas fa-thermometer-half"></i><div class="sensor-value" id="sensorTemp">26.5°C</div><div class="text-xs">Suhu</div></div>
-                    <div id="sensorPHCard" class="sensor-item"><i class="fas fa-flask"></i><div class="sensor-value" id="sensorPH">7.2</div><div class="text-xs">pH</div></div>
-                    <div class="sensor-item"><i class="fas fa-charging-station"></i><div class="sensor-value" id="powerWatts">0 W</div><div class="text-xs">Daya</div></div>
-                    <div class="sensor-item"><i class="fas fa-wifi"></i><div class="sensor-value">Sim</div><div class="text-xs">ESP32</div></div>
-                  </div>
-
-                  <div class="card" style="padding:16px;">
-                    <h3 style="font-size:1rem; margin-bottom:8px;"><i class="fas fa-chart-line"></i> Tren Sensor (20 data)</h3>
-                    <div style="height:200px;"><canvas id="trendChart"></canvas></div>
-                  </div>
-
-                  <!-- Katalog produk - grid biasa (tidak slide) -->
-                  <div class="card" style="padding:16px;">
-                    <h3 style="font-size:1rem; margin-bottom:12px;"><i class="fab fa-instagram"></i> Katalog Produk RDF</h3>
-                    <div class="product-grid">
-                      <div class="product-card" onclick="window.showProduct('1 Ton')"><div style="font-size:2.5rem;">📦</div><div class="font-bold">RDF 1 Ton</div><div class="text-xs">Kapasitas 1000L</div></div>
-                      <div class="product-card" onclick="window.showProduct('3 Ton')"><div style="font-size:2.5rem;">📦</div><div class="font-bold">RDF 3 Ton</div><div class="text-xs">Kapasitas 3000L</div></div>
-                      <div class="product-card" onclick="window.showProduct('5 Ton')"><div style="font-size:2.5rem;">📦</div><div class="font-bold">RDF 5 Ton</div><div class="text-xs">Kapasitas 5000L</div></div>
-                      <div class="product-card" onclick="window.showProduct('Custom')"><div style="font-size:2.5rem;">⚙️</div><div class="font-bold">Custom</div><div class="text-xs">Sesuai kebutuhan</div></div>
-                    </div>
-                    <p class="text-center text-[10px] opacity-50 mt-2">Klik untuk info produk</p>
-                  </div>
-
-                  <div class="card" style="padding:16px;">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><h3 style="font-size:1rem;"><i class="fas fa-list-alt"></i> Log Aktivitas</h3><button id="clearLogBtn" class="text-xs bg-white/10 px-3 py-1 rounded-full">Clear</button></div>
-                    <div id="logContainer" class="log-area"></div>
-                  </div>
-                </div>
-              </div>
+            <div><h1>NusaFlow Koi</h1><p>RDF Smart Control System</p></div>
+            <div style="display:flex; gap:10px;">
+              <button id="emergencyBtn" class="emergency btn-danger" style="padding:8px 14px;"><i class="fas fa-exclamation-triangle"></i> STOP</button>
+              <button id="themeBtn" style="background:rgba(255,255,255,0.15);"><i class="fas fa-sun"></i></button>
             </div>
           </div>
-          <div class="text-center text-[10px] opacity-40 mt-6">NusaFlow Koi Pro • RDF Founder Edition • Simulasi Real-time</div>
+
+          <!-- RDF Control -->
+          <div class="card">
+            <h3 style="margin-bottom:12px;"><i class="fas fa-water-pump"></i> RDF Drum Filter</h3>
+            <div style="display:flex; justify-content:space-between; margin-bottom:16px;">
+              <span>Status</span>
+              <span id="rdfStatus" class="px-3 py-1 rounded-full text-xs bg-red-500/40">BERHENTI</span>
+            </div>
+            <button id="toggleRdfBtn" class="btn-primary" style="width:100%;"><i class="fas fa-play-circle"></i> Nyalakan RDF</button>
+          </div>
+
+          <!-- Mode Operasi -->
+          <div class="card">
+            <h3 style="margin-bottom:12px;"><i class="fas fa-sliders-h"></i> Mode Operasi</h3>
+            <div style="display:flex; gap:8px; margin-bottom:12px;">
+              <button id="btnPumpOnly" style="flex:1;"><i class="fas fa-tint"></i> Pump Only</button>
+              <button id="btnDrumOnly" style="flex:1;"><i class="fas fa-cogs"></i> Drum Only</button>
+              <button id="btnNormal" style="flex:1;"><i class="fas fa-sync-alt"></i> Normal</button>
+            </div>
+            <div class="text-xs opacity-80">Mode aktif: <span id="modeInfo">Manual</span></div>
+          </div>
+
+          <!-- Timer Schedule -->
+          <div class="card">
+            <h3 style="margin-bottom:12px;"><i class="fas fa-clock"></i> Timer Otomatis</h3>
+            <div style="display:flex; gap:6px; margin-bottom:12px; flex-wrap:wrap;">
+              <input type="number" id="scheduleHour" placeholder="Jam" style="width:70px;">
+              <input type="number" id="scheduleMinute" placeholder="Menit" style="width:70px;">
+              <select id="scheduleAction" style="width:70px;"><option value="on">ON</option><option value="off">OFF</option></select>
+              <button id="addScheduleBtn" class="bg-blue-500 px-3 rounded-full">+</button>
+            </div>
+            <div id="scheduleList" class="max-h-32 overflow-y-auto"></div>
+            <button id="clearSchedulesBtn" class="text-xs text-red-300 mt-2">Hapus Semua Jadwal</button>
+          </div>
+
+          <!-- Perangkat Tambahan -->
+          <div class="card">
+            <h3 style="margin-bottom:12px;"><i class="fas fa-plug"></i> Perangkat Tambahan</h3>
+            <div style="display:flex; gap:10px;">
+              <button id="aeratorBtn" style="flex:1;"><i class="fas fa-fan"></i> Aerator OFF</button>
+              <button id="uvBtn" style="flex:1;"><i class="fas fa-sun"></i> UV Lamp OFF</button>
+            </div>
+          </div>
+
+          <!-- Tombol Aksi -->
+          <div class="action-buttons">
+            <button id="resetBtn" class="btn-warning"><i class="fas fa-undo-alt"></i> Reset</button>
+            <button id="settingsBtn" style="background:rgba(255,255,255,0.1);"><i class="fas fa-cog"></i> Threshold</button>
+            <button id="exportLogBtn" style="background:rgba(34,197,94,0.3);"><i class="fas fa-download"></i> Export</button>
+          </div>
+
+          <!-- Sensor Grid -->
+          <div class="sensor-grid">
+            <div id="sensorLevelCard" class="sensor-item"><i class="fas fa-water"></i><div class="sensor-value" id="sensorLevel">MEDIUM</div><div class="text-xs">Level Air</div></div>
+            <div id="sensorCurrentCard" class="sensor-item"><i class="fas fa-bolt"></i><div class="sensor-value" id="sensorCurrent">0.8 A</div><div class="text-xs">Arus Drum</div></div>
+            <div class="sensor-item"><i class="fas fa-charging-station"></i><div class="sensor-value" id="sensorVoltage">12.3 V</div><div class="text-xs">Tegangan</div></div>
+            <div class="sensor-item"><i class="fas fa-tachometer-alt"></i><div class="sensor-value" id="sensorFlow">85 L/min</div><div class="text-xs">Flow Rate</div></div>
+            <div id="sensorTempCard" class="sensor-item"><i class="fas fa-thermometer-half"></i><div class="sensor-value" id="sensorTemp">26.5°C</div><div class="text-xs">Suhu</div></div>
+            <div id="sensorPHCard" class="sensor-item"><i class="fas fa-flask"></i><div class="sensor-value" id="sensorPH">7.2</div><div class="text-xs">pH</div></div>
+            <div class="sensor-item"><i class="fas fa-charging-station"></i><div class="sensor-value" id="powerWatts">0 W</div><div class="text-xs">Daya</div></div>
+            <div class="sensor-item"><i class="fas fa-wifi"></i><div class="sensor-value" id="connStatus"><i class="fas fa-circle" style="color:#22c55e; font-size:0.6rem;"></i> Online</div><div class="text-xs">ESP32</div></div>
+          </div>
+
+          <!-- Grafik -->
+          <div class="card" style="padding:12px;">
+            <h3 style="font-size:1rem; margin-bottom:8px;"><i class="fas fa-chart-line"></i> Tren Sensor (20 data)</h3>
+            <div style="height:180px;"><canvas id="trendChart"></canvas></div>
+          </div>
+
+          <!-- Katalog Produk -->
+          <div class="card" style="padding:12px;">
+            <h3 style="font-size:1rem; margin-bottom:10px;"><i class="fab fa-instagram"></i> Katalog Produk RDF</h3>
+            <div class="product-grid">
+              <div class="product-card" onclick="window.showProduct('1 Ton')"><div style="font-size:2rem;">📦</div><div class="font-bold">RDF 1 Ton</div><div class="text-xs">Kapasitas 1000L</div></div>
+              <div class="product-card" onclick="window.showProduct('3 Ton')"><div style="font-size:2rem;">📦</div><div class="font-bold">RDF 3 Ton</div><div class="text-xs">Kapasitas 3000L</div></div>
+              <div class="product-card" onclick="window.showProduct('5 Ton')"><div style="font-size:2rem;">📦</div><div class="font-bold">RDF 5 Ton</div><div class="text-xs">Kapasitas 5000L</div></div>
+              <div class="product-card" onclick="window.showProduct('Custom')"><div style="font-size:2rem;">⚙️</div><div class="font-bold">Custom</div><div class="text-xs">Sesuai kebutuhan</div></div>
+            </div>
+            <p class="text-center text-[10px] opacity-50 mt-2">Klik untuk info produk</p>
+          </div>
+
+          <!-- Log Aktivitas -->
+          <div class="card" style="padding:12px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+              <h3 style="font-size:1rem;"><i class="fas fa-list-alt"></i> Log Aktivitas</h3>
+              <button id="clearLogBtn" class="text-xs bg-white/10 px-3 py-1 rounded-full">Clear</button>
+            </div>
+            <div id="logContainer" class="log-area"></div>
+          </div>
+
+          <div class="text-center text-[9px] opacity-40 mt-4">NusaFlow Koi Pro • RDF Founder Edition • Simulasi Real-time</div>
         </div>
         <div id="notifContainer"></div>
       `;
 
-      // Event listeners
+      // Pasang event listener
       document.getElementById('toggleRdfBtn')?.addEventListener('click', toggleRdf);
       document.getElementById('btnPumpOnly')?.addEventListener('click', () => setPumpOnly(true));
       document.getElementById('btnDrumOnly')?.addEventListener('click', () => setDrumOnly(true));
