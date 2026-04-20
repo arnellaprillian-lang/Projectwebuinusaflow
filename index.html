@@ -20,7 +20,6 @@
       color: white;
     }
 
-    /* Container */
     .container {
       width: 100%;
       max-width: 100%;
@@ -48,7 +47,7 @@
       margin-bottom: 20px;
       gap: 12px;
     }
-    .header-left h1 {
+    .header h1 {
       font-size: 1.8rem;
       font-weight: 700;
       background: linear-gradient(135deg, #c084fc, #a855f7);
@@ -56,29 +55,52 @@
       background-clip: text;
       color: transparent;
     }
-    .header-left p {
+    .header p {
       font-size: 0.7rem;
       opacity: 0.7;
     }
     .clock {
       text-align: right;
-      background: rgba(0,0,0,0.3);
-      padding: 6px 14px;
-      border-radius: 30px;
-      backdrop-filter: blur(8px);
     }
-    .clock .time {
-      font-size: 1.4rem;
+    .clock-time {
+      font-size: 1.5rem;
       font-weight: 600;
-      letter-spacing: 1px;
-      font-feature-settings: 'tnum';
+      letter-spacing: 0.5px;
     }
-    .clock .date {
+    .clock-date {
       font-size: 0.7rem;
       opacity: 0.7;
     }
 
-    /* Tombol */
+    /* Segmented control (iOS style) */
+    .segmented-control {
+      display: flex;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 40px;
+      padding: 4px;
+      gap: 4px;
+    }
+    .segmented-control button {
+      flex: 1;
+      background: transparent;
+      border: none;
+      padding: 8px 6px;
+      border-radius: 30px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: white;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .segmented-control button.active {
+      background: #7c3aed;
+      box-shadow: 0 2px 6px rgba(124, 58, 237, 0.4);
+    }
+    .segmented-control button:active {
+      transform: scale(0.96);
+    }
+
+    /* Tombol umum */
     button {
       background: rgba(255, 255, 255, 0.12);
       border: none;
@@ -98,78 +120,6 @@
     @keyframes pulse {
       0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.5); }
       50% { box-shadow: 0 0 0 6px rgba(220, 38, 38, 0); }
-    }
-
-    /* Toggle switch */
-    .toggle-group {
-      display: flex;
-      gap: 20px;
-      justify-content: center;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-    .toggle-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: rgba(0, 0, 0, 0.3);
-      padding: 6px 14px;
-      border-radius: 40px;
-    }
-    .toggle-item span {
-      font-size: 0.85rem;
-      font-weight: 500;
-    }
-    .switch {
-      position: relative;
-      display: inline-block;
-      width: 48px;
-      height: 24px;
-    }
-    .switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-    .slider {
-      position: absolute;
-      cursor: pointer;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: rgba(255,255,255,0.3);
-      transition: 0.3s;
-      border-radius: 34px;
-    }
-    .slider:before {
-      position: absolute;
-      content: "";
-      height: 18px;
-      width: 18px;
-      left: 3px;
-      bottom: 3px;
-      background-color: white;
-      transition: 0.3s;
-      border-radius: 50%;
-    }
-    input:checked + .slider {
-      background-color: #7c3aed;
-    }
-    input:checked + .slider:before {
-      transform: translateX(24px);
-    }
-
-    /* Action buttons bar - diperbaiki jarak */
-    .action-bar {
-      display: flex;
-      gap: 12px;
-      margin: 8px 0 20px 0;
-    }
-    .action-bar button {
-      flex: 1;
-      font-size: 0.8rem;
-      padding: 10px 0;
     }
 
     /* Sensor grid */
@@ -195,7 +145,7 @@
       margin-top: 4px;
     }
 
-    /* Katalog produk - gambar lokal placeholder */
+    /* Katalog produk grid */
     .product-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
@@ -212,11 +162,10 @@
     }
     .product-card:active { transform: scale(0.96); }
     .product-card img {
-      width: 80px;
-      height: 80px;
-      object-fit: contain;
-      margin-bottom: 8px;
+      width: 100%;
+      height: auto;
       border-radius: 16px;
+      margin-bottom: 6px;
     }
 
     /* Log area */
@@ -305,6 +254,16 @@
       font-size: 0.8rem;
     }
     input:focus, select:focus { outline: none; }
+
+    /* Action buttons (Reset, Threshold, Export) - terpisah dari kolom monitoring */
+    .action-group {
+      display: flex;
+      gap: 12px;
+      margin: 8px 0 20px 0;
+    }
+    .action-group button {
+      flex: 1;
+    }
   </style>
 </head>
 <body>
@@ -373,21 +332,6 @@
     let scheduleInterval = null;
     let clockInterval = null;
 
-    // ========== CLOCK ==========
-    function updateClock() {
-      const now = new Date();
-      const timeStr = now.toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
-      const dateStr = now.toLocaleDateString('id-ID', { day:'numeric', month:'long', year:'numeric' });
-      const timeEl = document.getElementById('clockTime');
-      const dateEl = document.getElementById('clockDate');
-      if (timeEl) timeEl.innerText = timeStr;
-      if (dateEl) dateEl.innerText = dateStr;
-    }
-    function startClock() {
-      updateClock();
-      clockInterval = setInterval(updateClock, 1000);
-    }
-
     // ========== HELPER ==========
     function addLog(action, detail) {
       const time = new Date().toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
@@ -417,6 +361,17 @@
         gain.gain.exponentialRampToValueAtTime(0.00001, audio.currentTime + 0.4);
         osc.stop(audio.currentTime + 0.4);
       } catch(e) {}
+    }
+
+    // Jam realtime
+    function updateClock() {
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
+      const dateStr = now.toLocaleDateString('id-ID', { day:'numeric', month:'long', year:'numeric' });
+      const clockTime = document.getElementById('clockTime');
+      const clockDate = document.getElementById('clockDate');
+      if (clockTime) clockTime.innerText = timeStr;
+      if (clockDate) clockDate.innerText = dateStr;
     }
 
     // ========== CHART ==========
@@ -553,11 +508,13 @@
       if (rdfBtn) {
         rdfBtn.innerHTML = `<i class="fas ${state.rdfOn ? 'fa-stop-circle' : 'fa-play-circle'}"></i> ${state.rdfOn ? 'Matikan RDF' : 'Nyalakan RDF'}`;
       }
-      // Toggle switches
-      const pumpToggle = document.getElementById('pumpOnlyToggle');
-      const drumToggle = document.getElementById('drumOnlyToggle');
-      if (pumpToggle) pumpToggle.checked = state.pumpOnly;
-      if (drumToggle) drumToggle.checked = state.drumOnly;
+      // Segmented control active class
+      const segPump = document.getElementById('segPumpOnly');
+      const segDrum = document.getElementById('segDrumOnly');
+      const segNormal = document.getElementById('segNormal');
+      if (segPump) segPump.classList.toggle('active', state.pumpOnly);
+      if (segDrum) segDrum.classList.toggle('active', state.drumOnly);
+      if (segNormal) segNormal.classList.toggle('active', !state.pumpOnly && !state.drumOnly);
       // Aerator & UV
       const aeratorBtn = document.getElementById('aeratorBtn');
       const uvBtn = document.getElementById('uvBtn');
@@ -569,7 +526,7 @@
         uvBtn.innerHTML = `<i class="fas fa-sun"></i> UV Lamp ${state.uvOn?'ON':'OFF'}`;
         uvBtn.classList.toggle('bg-purple-600', state.uvOn);
       }
-      // Mode info
+      // Mode info (teks tambahan)
       const modeInfo = document.getElementById('modeInfo');
       if (modeInfo) {
         if (state.pumpOnly) modeInfo.innerText = 'Pump Only';
@@ -577,7 +534,7 @@
         else if (state.schedules.length > 0) modeInfo.innerText = 'Scheduled';
         else modeInfo.innerText = 'Manual';
       }
-      // Koneksi
+      // Koneksi ESP32
       const connStatus = document.getElementById('connStatus');
       if (connStatus) {
         connStatus.innerHTML = `<i class="fas fa-circle" style="color: #22c55e; font-size: 0.6rem;"></i> Online`;
@@ -586,42 +543,33 @@
 
     // ========== KONTROL ==========
     function toggleRdf() {
-      if (state.pumpOnly) setPumpOnly(false);
-      if (state.drumOnly) setDrumOnly(false);
+      // Jika mode Pump Only atau Drum Only aktif, reset dulu
+      if (state.pumpOnly) setMode('normal');
+      if (state.drumOnly) setMode('normal');
       state.rdfOn = !state.rdfOn;
       addLog('Manual', `RDF ${state.rdfOn ? 'ON' : 'OFF'}`);
       addNotif(`RDF ${state.rdfOn ? 'ON' : 'OFF'}`, state.rdfOn ? 'success' : 'error');
       updateUI();
     }
-    function setPumpOnly(enable) {
-      state.pumpOnly = enable;
-      if (enable) {
+    function setMode(mode) {
+      if (mode === 'pump') {
+        state.pumpOnly = true;
         state.drumOnly = false;
         state.rdfOn = false;
         addLog('Mode', 'Pump Only aktif');
         addNotif('Mode Pump Only', 'info');
-      }
-      updateUI();
-      const drumToggle = document.getElementById('drumOnlyToggle');
-      if (drumToggle) drumToggle.checked = state.drumOnly;
-    }
-    function setDrumOnly(enable) {
-      state.drumOnly = enable;
-      if (enable) {
+      } else if (mode === 'drum') {
+        state.drumOnly = true;
         state.pumpOnly = false;
         state.rdfOn = true;
         addLog('Mode', 'Drum Only aktif');
         addNotif('Mode Drum Only', 'info');
+      } else { // normal
+        state.pumpOnly = false;
+        state.drumOnly = false;
+        addLog('Mode', 'Mode Normal');
+        addNotif('Mode Normal', 'info');
       }
-      updateUI();
-      const pumpToggle = document.getElementById('pumpOnlyToggle');
-      if (pumpToggle) pumpToggle.checked = state.pumpOnly;
-    }
-    function setNormalMode() {
-      state.pumpOnly = false;
-      state.drumOnly = false;
-      addLog('Mode', 'Mode Normal');
-      addNotif('Mode Normal', 'info');
       updateUI();
     }
     function toggleAerator() { state.aeratorOn = !state.aeratorOn; addLog('Aerator', state.aeratorOn ? 'ON' : 'OFF'); addNotif(`Aerator ${state.aeratorOn?'ON':'OFF'}`); updateUI(); }
@@ -721,13 +669,10 @@
       app.innerHTML = `
         <div class="container">
           <div class="header">
-            <div class="header-left">
-              <h1>NusaFlow Koi</h1>
-              <p>RDF Smart Control System</p>
-            </div>
+            <div><h1>NusaFlow Koi</h1><p>RDF Smart Control System</p></div>
             <div class="clock">
-              <div class="time" id="clockTime">--:--:--</div>
-              <div class="date" id="clockDate">---</div>
+              <div class="clock-time" id="clockTime">--:--:--</div>
+              <div class="clock-date" id="clockDate">---</div>
             </div>
           </div>
 
@@ -741,24 +686,13 @@
             <button id="toggleRdfBtn" class="btn-primary" style="width:100%;"><i class="fas fa-play-circle"></i> Nyalakan RDF</button>
           </div>
 
-          <!-- Mode Operasi dengan Toggle Switch -->
+          <!-- Mode Operasi dengan Segmented Control -->
           <div class="card">
             <h3 style="margin-bottom:12px;"><i class="fas fa-sliders-h"></i> Mode Operasi</h3>
-            <div class="toggle-group">
-              <div class="toggle-item">
-                <span>Pump Only</span>
-                <label class="switch">
-                  <input type="checkbox" id="pumpOnlyToggle">
-                  <span class="slider"></span>
-                </label>
-              </div>
-              <div class="toggle-item">
-                <span>Drum Only</span>
-                <label class="switch">
-                  <input type="checkbox" id="drumOnlyToggle">
-                  <span class="slider"></span>
-                </label>
-              </div>
+            <div class="segmented-control">
+              <button id="segPumpOnly">💧 Pump Only</button>
+              <button id="segDrumOnly">⚙️ Drum Only</button>
+              <button id="segNormal">🔄 Normal</button>
             </div>
             <div class="text-xs opacity-80 text-center mt-2">Mode aktif: <span id="modeInfo">Manual</span></div>
           </div>
@@ -785,12 +719,15 @@
             </div>
           </div>
 
-          <!-- Action Bar (Reset, Threshold, Export) - jarak sudah diperbaiki -->
-          <div class="action-bar">
+          <!-- Tombol Aksi (Reset, Threshold, Export) terpisah dari monitoring -->
+          <div class="action-group">
             <button id="resetBtn" class="btn-warning"><i class="fas fa-undo-alt"></i> Reset</button>
             <button id="settingsBtn" style="background:rgba(255,255,255,0.1);"><i class="fas fa-cog"></i> Threshold</button>
             <button id="exportLogBtn" style="background:rgba(34,197,94,0.3);"><i class="fas fa-download"></i> Export</button>
           </div>
+
+          <!-- Emergency Stop -->
+          <button id="emergencyBtn" class="emergency btn-danger" style="width:100%; margin-bottom:20px;"><i class="fas fa-exclamation-triangle"></i> EMERGENCY STOP</button>
 
           <!-- Sensor Grid -->
           <div class="sensor-grid">
@@ -810,27 +747,27 @@
             <div style="height:180px;"><canvas id="trendChart"></canvas></div>
           </div>
 
-          <!-- Katalog Produk dengan gambar lokal (placeholder) -->
+          <!-- Katalog Produk -->
           <div class="card" style="padding:12px;">
             <h3 style="font-size:1rem; margin-bottom:10px;"><i class="fab fa-instagram"></i> Katalog Produk RDF</h3>
             <div class="product-grid">
               <div class="product-card" onclick="window.showProduct('1 Ton')">
-                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%237c3aed'/%3E%3Ctext x='50' y='55' font-size='40' text-anchor='middle' fill='white' dy='.3em'%3E1t%3C/text%3E%3C/svg%3E" alt="RDF 1 Ton">
+                <img src="https://placehold.co/200x150?text=RDF+1+Ton" alt="RDF 1 Ton" onerror="this.src='https://placehold.co/200x150?text=RDF+1+Ton'">
                 <div class="font-bold mt-2">RDF 1 Ton</div>
                 <div class="text-xs">Kapasitas 1000L</div>
               </div>
               <div class="product-card" onclick="window.showProduct('3 Ton')">
-                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%237c3aed'/%3E%3Ctext x='50' y='55' font-size='40' text-anchor='middle' fill='white' dy='.3em'%3E3t%3C/text%3E%3C/svg%3E" alt="RDF 3 Ton">
+                <img src="https://placehold.co/200x150?text=RDF+3+Ton" alt="RDF 3 Ton" onerror="this.src='https://placehold.co/200x150?text=RDF+3+Ton'">
                 <div class="font-bold mt-2">RDF 3 Ton</div>
                 <div class="text-xs">Kapasitas 3000L</div>
               </div>
               <div class="product-card" onclick="window.showProduct('5 Ton')">
-                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%237c3aed'/%3E%3Ctext x='50' y='55' font-size='40' text-anchor='middle' fill='white' dy='.3em'%3E5t%3C/text%3E%3C/svg%3E" alt="RDF 5 Ton">
+                <img src="https://placehold.co/200x150?text=RDF+5+Ton" alt="RDF 5 Ton" onerror="this.src='https://placehold.co/200x150?text=RDF+5+Ton'">
                 <div class="font-bold mt-2">RDF 5 Ton</div>
                 <div class="text-xs">Kapasitas 5000L</div>
               </div>
               <div class="product-card" onclick="window.showProduct('Custom')">
-                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%236b21a8'/%3E%3Ctext x='50' y='55' font-size='40' text-anchor='middle' fill='white' dy='.3em'%3E⚙%3C/text%3E%3C/svg%3E" alt="Custom">
+                <img src="https://placehold.co/200x150?text=Custom" alt="Custom" onerror="this.src='https://placehold.co/200x150?text=Custom'">
                 <div class="font-bold mt-2">Custom</div>
                 <div class="text-xs">Sesuai kebutuhan</div>
               </div>
@@ -854,8 +791,9 @@
 
       // Event listeners
       document.getElementById('toggleRdfBtn')?.addEventListener('click', toggleRdf);
-      document.getElementById('pumpOnlyToggle')?.addEventListener('change', (e) => setPumpOnly(e.target.checked));
-      document.getElementById('drumOnlyToggle')?.addEventListener('change', (e) => setDrumOnly(e.target.checked));
+      document.getElementById('segPumpOnly')?.addEventListener('click', () => setMode('pump'));
+      document.getElementById('segDrumOnly')?.addEventListener('click', () => setMode('drum'));
+      document.getElementById('segNormal')?.addEventListener('click', () => setMode('normal'));
       document.getElementById('emergencyBtn')?.addEventListener('click', emergencyStop);
       document.getElementById('aeratorBtn')?.addEventListener('click', toggleAerator);
       document.getElementById('uvBtn')?.addEventListener('click', toggleUV);
@@ -866,6 +804,10 @@
       document.getElementById('addScheduleBtn')?.addEventListener('click', () => window.addScheduleFromUI());
       document.getElementById('clearSchedulesBtn')?.addEventListener('click', clearSchedules);
 
+      // Mulai jam
+      updateClock();
+      clockInterval = setInterval(updateClock, 1000);
+
       updateUI();
       updateSensorUI();
       updateLogUI();
@@ -873,7 +815,6 @@
       initChart();
       startSensorSim();
       startScheduleChecker();
-      startClock();
     }
 
     window.showProduct = (name) => {
