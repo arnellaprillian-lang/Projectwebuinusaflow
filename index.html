@@ -2,96 +2,54 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-  <title>NusaFlow Koi | RDF Control System</title>
-  <!-- Font Awesome 6 (gratis) -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>NusaFlow Koi Pro | RDF Control & Product Catalog</title>
+  <!-- Tailwind + Font Awesome + Chart.js -->
+  <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    /* Custom animations & glassmorphism biru transparan */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
-
-    body {
-      background: radial-gradient(circle at 10% 20%, #00172e, #000b17);
-      min-height: 100vh;
-      padding: 20px;
-      color: white;
+    @keyframes pulse-red {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+      50% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
     }
-
-    /* Container utama */
-    .container {
-      max-width: 1300px;
-      margin: 0 auto;
+    @keyframes blink {
+      from { background-color: rgba(239, 68, 68, 0.3); border-color: #ef4444; }
+      to { background-color: rgba(239, 68, 68, 0.8); border-color: #dc2626; }
     }
-
-    /* Glassmorphism iOS style */
-    .glass {
-      background: rgba(20, 35, 60, 0.55);
+    .glass-card {
+      background: rgba(15, 35, 70, 0.55);
       backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(59, 130, 246, 0.4);
       border-radius: 2rem;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    }
+    .glass-card:hover {
+      background: rgba(25, 55, 100, 0.65);
+      border-color: rgba(59, 130, 246, 0.7);
+      transform: translateY(-3px);
+    }
+    .product-card {
       transition: all 0.3s ease;
-    }
-
-    .glass:hover {
-      background: rgba(30, 50, 80, 0.65);
-      border-color: rgba(255, 255, 255, 0.35);
-      transform: translateY(-2px);
-    }
-
-    /* Tombol */
-    button {
-      transition: all 0.2s ease;
       cursor: pointer;
-      border: none;
-      background: rgba(255, 255, 255, 0.1);
-      color: white;
-      border-radius: 40px;
-      padding: 10px 16px;
-      font-weight: 600;
     }
-    button:active {
-      transform: scale(0.96);
+    .product-card:hover {
+      transform: scale(1.02) translateY(-5px);
+      box-shadow: 0 20px 25px -12px rgba(0, 0, 0, 0.3);
     }
-    button.primary {
-      background: #007aff;
-      box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
+    .emergency-btn {
+      animation: pulse-red 1s infinite;
     }
-    button.danger {
-      background: #ff3b30;
+    .blink-red {
+      animation: blink 0.5s step-end infinite alternate;
     }
-    button.warning {
-      background: #ff9500;
-    }
-
-    /* Grid */
-    .grid-2 {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 1.5rem;
-    }
-    @media (min-width: 768px) {
-      .grid-2 {
-        grid-template-columns: 1fr 2fr;
-      }
-    }
-    .sensor-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1rem;
-    }
-    @media (min-width: 640px) {
-      .sensor-grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
-    }
-
     /* Loading screen */
-    .loading {
+    .loading-screen {
       position: fixed;
       top: 0;
       left: 0;
@@ -101,259 +59,148 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 1000;
-      transition: opacity 0.5s;
+      z-index: 2000;
+      transition: opacity 0.6s ease;
     }
     .loading-content {
       text-align: center;
+      animation: fadeInUp 0.5s;
     }
     .loading-bar {
-      width: 250px;
+      width: 260px;
       height: 6px;
       background: rgba(255,255,255,0.2);
       border-radius: 10px;
-      margin-top: 20px;
+      margin-top: 24px;
       overflow: hidden;
     }
     .loading-progress {
       width: 0%;
       height: 100%;
       background: linear-gradient(90deg, #3b82f6, #00b4ff);
-      transition: width 0.2s;
+      transition: width 0.2s ease;
     }
-
-    /* Toast notifikasi */
-    .toast {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      z-index: 1100;
-      background: rgba(0,0,0,0.8);
-      backdrop-filter: blur(12px);
-      border-radius: 30px;
-      padding: 10px 18px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 0.85rem;
-      animation: slideIn 0.3s ease;
-      border-left: 4px solid;
-    }
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateX(100px); }
-      to { opacity: 1; transform: translateX(0); }
-    }
-    .log-area {
-      max-height: 180px;
-      overflow-y: auto;
-      font-size: 0.75rem;
-    }
-    .log-item {
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-      padding: 6px 0;
-      display: flex;
-      gap: 8px;
-    }
-    .badge {
-      background: rgba(0,0,0,0.4);
-      border-radius: 30px;
-      padding: 4px 12px;
-      font-size: 0.7rem;
-    }
-    input {
-      background: rgba(0,0,0,0.4);
-      border: 1px solid rgba(255,255,255,0.3);
-      border-radius: 30px;
-      padding: 8px 12px;
-      color: white;
-      width: 100%;
-    }
+    /* Custom scrollbar */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: rgba(255,255,255,0.1); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 10px; }
   </style>
 </head>
-<body>
-<div id="app"></div>
+<body class="transition-colors duration-300" style="background: radial-gradient(circle at 10% 20%, #001e3a, #000c1a);">
+
+<div id="loadingScreen" class="loading-screen">
+  <div class="loading-content">
+    <div class="text-5xl font-black tracking-wider mb-2">NUSA<span class="text-blue-400">FLOW</span></div>
+    <div class="text-xs opacity-80 mb-4">Koi Pond RDF System</div>
+    <div class="loading-bar"><div class="loading-progress" id="loadingProgress"></div></div>
+    <div class="mt-3 text-sm font-mono" id="loadingPercent">0%</div>
+  </div>
+</div>
+
+<div id="app" class="min-h-screen p-4 md:p-6 opacity-0 transition-opacity duration-700"></div>
 
 <script>
-  // ======================== VANILLA JS DASHBOARD ========================
   (function() {
-    // ----- Loading screen -----
-    const loadingDiv = document.createElement('div');
-    loadingDiv.className = 'loading';
-    loadingDiv.innerHTML = `
-      <div class="loading-content">
-        <div style="font-size: 3rem; font-weight: 800; letter-spacing: 2px;">NUSA<span style="color:#3b82f6;">FLOW</span></div>
-        <div style="font-size: 0.7rem; opacity:0.7; margin-top: 6px;">Koi Pond RDF System</div>
-        <div class="loading-bar"><div class="loading-progress" id="loadingProgress"></div></div>
-        <div style="margin-top: 12px; font-size:0.8rem;" id="loadingPercent">0%</div>
-      </div>
-    `;
-    document.body.appendChild(loadingDiv);
-    
+    // ---------- LOADING SIMULATION ----------
     let progress = 0;
-    const interval = setInterval(() => {
+    const loadingScreen = document.getElementById('loadingScreen');
+    const progressBar = document.getElementById('loadingProgress');
+    const percentSpan = document.getElementById('loadingPercent');
+    const loadingInterval = setInterval(() => {
       progress += Math.random() * 15 + 5;
       if (progress >= 100) {
         progress = 100;
-        clearInterval(interval);
+        clearInterval(loadingInterval);
         setTimeout(() => {
-          loadingDiv.style.opacity = '0';
-          setTimeout(() => loadingDiv.remove(), 500);
-        }, 300);
+          loadingScreen.style.opacity = '0';
+          setTimeout(() => {
+            loadingScreen.style.display = 'none';
+            document.getElementById('app').style.opacity = '1';
+          }, 600);
+        }, 400);
       }
-      const progEl = document.getElementById('loadingProgress');
-      const percentEl = document.getElementById('loadingPercent');
-      if (progEl) progEl.style.width = Math.min(progress, 100) + '%';
-      if (percentEl) percentEl.innerText = Math.floor(Math.min(progress, 100)) + '%';
+      if (progressBar) progressBar.style.width = Math.min(progress, 100) + '%';
+      if (percentSpan) percentSpan.innerText = Math.floor(Math.min(progress, 100)) + '%';
     }, 150);
-    
-    // ----- State Management -----
+
+    // ---------- STATE (Sama seperti sebelumnya dengan tambahan produk) ----------
     let state = {
-      rdfRunning: false,       // drum filter
+      rdfRunning: false,
+      drumSpeed: 70,
       pumpOnlyMode: false,
       drumOnlyMode: false,
-      timerEnabled: false,
-      timerOnSec: 30,
-      timerOffSec: 120,
-      timerRemaining: 0,
-      timerState: 'OFF',      // 'ON' or 'OFF'
+      aeratorOn: false,
+      uvLightOn: false,
+      schedules: [],
       waterLevel: 'MEDIUM',
       drumCurrent: 0.8,
       voltage: 12.3,
       flowRate: 85,
       waterTemp: 26.5,
       phValue: 7.2,
+      powerWatts: 0,
+      thresholds: { maxCurrent: 2.5, minPh: 6.0, maxPh: 8.5, maxTemp: 32 },
       logs: [],
-      notifications: []
+      notifications: [],
+      darkMode: true,
+      tempHistory: Array(30).fill(26.5),
+      phHistory: Array(30).fill(7.2),
+      voltageHistory: Array(30).fill(12.3),
+      labels: Array(30).fill('')
     };
-    
-    let timerInterval = null;
-    
-    // Helper: add log & notif
+
+    let timerInterval = null, scheduleCheckInterval = null, sensorInterval = null, chartInstance = null;
+
+    // Helper functions (log, notif, beep, chart, dll) sama seperti sebelumnya
     function addLog(action, detail) {
       const time = new Date().toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
-      state.logs = [{ id: Date.now(), time, action, detail }, ...state.logs].slice(0, 40);
+      state.logs = [{ id: Date.now(), time, action, detail }, ...state.logs].slice(0, 50);
       updateLogUI();
     }
-    
     function addNotification(msg, type = 'info') {
       const id = Date.now();
       state.notifications = [...state.notifications, { id, msg, type }];
       updateNotificationsUI();
+      if (type === 'error') playBeep();
       setTimeout(() => {
         state.notifications = state.notifications.filter(n => n.id !== id);
         updateNotificationsUI();
-      }, 3800);
+      }, 4500);
     }
-    
-    // Timer logic
-    function startTimerCycle() {
-      if (timerInterval) clearInterval(timerInterval);
-      state.timerEnabled = true;
-      state.timerState = 'ON';
-      state.timerRemaining = state.timerOnSec;
-      state.rdfRunning = true;
-      addLog('Timer', `RDF menyala selama ${state.timerOnSec} detik`);
-      addNotification(`Timer mulai: RDF ON ${state.timerOnSec}s`, 'success');
-      updateUI();
-      
-      timerInterval = setInterval(() => {
-        if (state.timerRemaining <= 1) {
-          if (state.timerState === 'ON') {
-            // Matikan RDF
-            state.rdfRunning = false;
-            state.timerState = 'OFF';
-            state.timerRemaining = state.timerOffSec;
-            addLog('Timer', `RDF mati selama ${state.timerOffSec} detik`);
-            addNotification(`RDF OFF ${state.timerOffSec}s`, 'info');
-          } else {
-            // Nyalakan RDF
-            state.rdfRunning = true;
-            state.timerState = 'ON';
-            state.timerRemaining = state.timerOnSec;
-            addLog('Timer', `RDF menyala kembali ${state.timerOnSec} detik`);
-            addNotification(`RDF ON kembali`, 'success');
-          }
-          updateUI();
-        } else {
-          state.timerRemaining--;
-          updateTimerUI();
-        }
-      }, 1000);
-      updateTimerUI();
+    function playBeep() {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.frequency.value = 880;
+        gain.gain.value = 0.2;
+        osc.start();
+        gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.5);
+        osc.stop(audioCtx.currentTime + 0.5);
+      } catch(e) {}
     }
-    
-    function stopTimer() {
-      if (timerInterval) clearInterval(timerInterval);
-      timerInterval = null;
-      state.timerEnabled = false;
-      state.timerRemaining = 0;
-      addLog('Timer', 'Timer dihentikan manual');
-      addNotification('Timer RDF dihentikan', 'info');
-      updateUI();
+    function updateChart() {
+      if (!chartInstance) return;
+      chartInstance.data.datasets[0].data = [...state.tempHistory];
+      chartInstance.data.datasets[1].data = [...state.phHistory];
+      chartInstance.data.datasets[2].data = [...state.voltageHistory];
+      chartInstance.update();
     }
-    
-    // Toggle RDF manual
-    function toggleRdf() {
-      if (state.pumpOnlyMode) state.pumpOnlyMode = false;
-      if (state.drumOnlyMode) state.drumOnlyMode = false;
-      if (state.timerEnabled) stopTimer();
-      state.rdfRunning = !state.rdfRunning;
-      addLog('Manual', `RDF ${state.rdfRunning ? 'Dinyalakan' : 'Dimatikan'}`);
-      addNotification(`RDF ${state.rdfRunning ? 'ON' : 'OFF'} (manual)`, state.rdfRunning ? 'success' : 'error');
-      updateUI();
+    function pushHistory() {
+      state.tempHistory.push(state.waterTemp);
+      state.phHistory.push(state.phValue);
+      state.voltageHistory.push(state.voltage);
+      if (state.tempHistory.length > 30) state.tempHistory.shift();
+      if (state.phHistory.length > 30) state.phHistory.shift();
+      if (state.voltageHistory.length > 30) state.voltageHistory.shift();
+      updateChart();
     }
-    
-    // Mode pump only / drum only
-    function setPumpOnly(enable) {
-      if (enable) {
-        state.pumpOnlyMode = true;
-        state.drumOnlyMode = false;
-        if (state.timerEnabled) stopTimer();
-        state.rdfRunning = false; // drum mati
-        addLog('Mode', 'Pump Only aktif - Pompa menyala, Drum mati');
-        addNotification('Mode Pump Only aktif', 'info');
-      } else {
-        state.pumpOnlyMode = false;
-      }
-      updateUI();
-    }
-    function setDrumOnly(enable) {
-      if (enable) {
-        state.drumOnlyMode = true;
-        state.pumpOnlyMode = false;
-        if (state.timerEnabled) stopTimer();
-        state.rdfRunning = true; // drum hidup
-        addLog('Mode', 'Drum Only aktif - Drum menyala, Pompa mati');
-        addNotification('Mode Drum Only aktif', 'info');
-      } else {
-        state.drumOnlyMode = false;
-      }
-      updateUI();
-    }
-    function setNormalMode() {
-      state.pumpOnlyMode = false;
-      state.drumOnlyMode = false;
-      addLog('Mode', 'Mode Normal (manual/timer)');
-      addNotification('Mode Normal', 'info');
-      updateUI();
-    }
-    
-    function resetSystem() {
-      state.rdfRunning = false;
-      state.pumpOnlyMode = false;
-      state.drumOnlyMode = false;
-      if (state.timerEnabled) stopTimer();
-      state.timerEnabled = false;
-      state.timerRemaining = 0;
-      addLog('System', 'Reset semua kontrol ke default');
-      addNotification('System direset', 'success');
-      updateUI();
-    }
-    
-    // Simulasi sensor (setiap 2.5 detik)
     function startSensorSimulation() {
-      setInterval(() => {
-        // Level air dipengaruhi rdfRunning dan mode
+      if (sensorInterval) clearInterval(sensorInterval);
+      sensorInterval = setInterval(() => {
+        // Level air
         let newLevel = state.waterLevel;
         const rand = Math.random();
         if (state.rdfRunning && !state.pumpOnlyMode) {
@@ -369,258 +216,242 @@
           newLevel = levels[Math.floor(Math.random()*3)];
         }
         state.waterLevel = newLevel;
-        
         // Arus drum
         if (state.rdfRunning) {
-          state.drumCurrent = parseFloat((0.8 + Math.random() * 1.0).toFixed(2));
+          let baseCurrent = 0.5 + (state.drumSpeed / 100) * 1.2;
+          state.drumCurrent = parseFloat((baseCurrent + Math.random() * 0.3).toFixed(2));
         } else {
           state.drumCurrent = parseFloat((0.1 + Math.random() * 0.2).toFixed(2));
         }
-        // Tegangan
-        state.voltage = parseFloat((Math.min(13.2, Math.max(11.2, state.voltage + (Math.random()-0.5)*0.15)).toFixed(1)));
-        // Flow rate
+        state.voltage = parseFloat((Math.min(13.5, Math.max(11.0, state.voltage + (Math.random()-0.5)*0.1)).toFixed(1)));
         let baseFlow = 0;
         if (state.pumpOnlyMode || (!state.drumOnlyMode && state.rdfRunning)) baseFlow = 60 + Math.random() * 40;
         else if (state.drumOnlyMode && state.rdfRunning) baseFlow = 20 + Math.random() * 20;
         else baseFlow = 5 + Math.random() * 15;
         state.flowRate = parseFloat(baseFlow.toFixed(1));
-        // Suhu
-        state.waterTemp = parseFloat((state.waterTemp + (Math.random()-0.5)*0.2).toFixed(1));
-        // pH
-        state.phValue = parseFloat((state.phValue + (Math.random()-0.5)*0.05).toFixed(2));
+        state.waterTemp = parseFloat((state.waterTemp + (Math.random()-0.5)*0.15).toFixed(1));
+        state.phValue = parseFloat((state.phValue + (Math.random()-0.5)*0.04).toFixed(2));
+        state.powerWatts = parseFloat((state.voltage * state.drumCurrent).toFixed(1));
         
-        // Peringatan bahaya
-        if (state.drumCurrent > 2.5) addNotification(`⚠️ Arus drum tinggi: ${state.drumCurrent}A`, 'error');
-        if (state.phValue < 6.0 || state.phValue > 8.5) addNotification(`⚠️ pH tidak ideal: ${state.phValue}`, 'error');
-        if (state.waterTemp > 32) addNotification(`🌡️ Suhu tinggi: ${state.waterTemp}°C`, 'error');
+        if (state.drumCurrent > state.thresholds.maxCurrent) addNotification(`⚠️ Arus drum tinggi: ${state.drumCurrent}A`, 'error');
+        if (state.phValue < state.thresholds.minPh || state.phValue > state.thresholds.maxPh) addNotification(`⚠️ pH tidak ideal: ${state.phValue}`, 'error');
+        if (state.waterTemp > state.thresholds.maxTemp) addNotification(`🌡️ Suhu tinggi: ${state.waterTemp}°C`, 'error');
         
-        updateUI();
+        pushHistory();
         updateSensorUI();
+        updateStatusAlerts();
+        updateUI();
       }, 2500);
     }
-    
-    // Update UI elements
-    function updateUI() {
-      // Update status RDF
-      const rdfStatus = document.getElementById('rdfStatus');
-      if (rdfStatus) {
-        rdfStatus.innerText = state.rdfRunning ? 'BERJALAN' : 'BERHENTI';
-        rdfStatus.className = `badge ${state.rdfRunning ? 'bg-green-500/40' : 'bg-red-500/40'}`;
+    function updateStatusAlerts() {
+      const currentCard = document.getElementById('sensorCurrentCard');
+      const phCard = document.getElementById('sensorPHCard');
+      const tempCard = document.getElementById('sensorTempCard');
+      if (currentCard) {
+        if (state.drumCurrent > state.thresholds.maxCurrent) currentCard.classList.add('blink-red');
+        else currentCard.classList.remove('blink-red');
       }
-      // Mode buttons highlight
-      document.getElementById('btnPumpOnly')?.classList.toggle('primary', state.pumpOnlyMode);
-      document.getElementById('btnDrumOnly')?.classList.toggle('primary', state.drumOnlyMode);
-      document.getElementById('btnNormal')?.classList.toggle('primary', !state.pumpOnlyMode && !state.drumOnlyMode && !state.timerEnabled);
-      // Timer UI
-      const timerPanel = document.getElementById('timerPanel');
-      if (timerPanel) {
-        if (state.timerEnabled) {
-          timerPanel.innerHTML = `
-            <div style="text-align:center">
-              <div style="font-size:2rem; font-weight:bold; font-family:monospace">${formatTime(state.timerRemaining)}</div>
-              <div class="badge" style="margin:8px 0">Status: ${state.timerState === 'ON' ? 'RDF ON' : 'RDF OFF'}</div>
-              <button class="danger" id="stopTimerBtn">Stop Timer</button>
-            </div>
-          `;
-          const stopBtn = document.getElementById('stopTimerBtn');
-          if (stopBtn) stopBtn.onclick = () => stopTimer();
-        } else {
-          timerPanel.innerHTML = `
-            <div class="grid-2" style="grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px">
-              <div><label style="font-size:0.7rem">ON (detik)</label><input type="number" id="timerOnInput" value="${state.timerOnSec}" min="1"></div>
-              <div><label style="font-size:0.7rem">OFF (detik)</label><input type="number" id="timerOffInput" value="${state.timerOffSec}" min="1"></div>
-            </div>
-            <button class="primary" id="startTimerBtn" style="width:100%">Aktifkan Timer Otomatis</button>
-          `;
-          const startBtn = document.getElementById('startTimerBtn');
-          const onInput = document.getElementById('timerOnInput');
-          const offInput = document.getElementById('timerOffInput');
-          if (startBtn) {
-            startBtn.onclick = () => {
-              state.timerOnSec = parseInt(onInput?.value || 30);
-              state.timerOffSec = parseInt(offInput?.value || 120);
-              startTimerCycle();
-            };
-          }
-        }
+      if (phCard) {
+        if (state.phValue < state.thresholds.minPh || state.phValue > state.thresholds.maxPh) phCard.classList.add('blink-red');
+        else phCard.classList.remove('blink-red');
       }
-      // Tombol RDF utama
-      const toggleBtn = document.getElementById('toggleRdfBtn');
-      if (toggleBtn) {
-        toggleBtn.innerHTML = `<i class="fas ${state.rdfRunning ? 'fa-stop-circle' : 'fa-play-circle'}"></i> ${state.rdfRunning ? 'Matikan RDF' : 'Nyalakan RDF'}`;
-      }
-      // Mode indicator
-      const modeInfo = document.getElementById('modeInfo');
-      if (modeInfo) {
-        if (state.pumpOnlyMode) modeInfo.innerText = 'Pump Only';
-        else if (state.drumOnlyMode) modeInfo.innerText = 'Drum Only';
-        else if (state.timerEnabled) modeInfo.innerText = 'Timer';
-        else modeInfo.innerText = 'Manual';
+      if (tempCard) {
+        if (state.waterTemp > state.thresholds.maxTemp) tempCard.classList.add('blink-red');
+        else tempCard.classList.remove('blink-red');
       }
     }
-    
-    function updateTimerUI() {
-      const timerDisplay = document.querySelector('#timerPanel .timerDisplay');
-      if (timerDisplay) timerDisplay.innerText = formatTime(state.timerRemaining);
-    }
-    
     function updateSensorUI() {
-      const levelEl = document.getElementById('sensorLevel');
-      if (levelEl) levelEl.innerText = state.waterLevel;
-      const currentEl = document.getElementById('sensorCurrent');
-      if (currentEl) currentEl.innerText = state.drumCurrent + ' A';
-      const voltEl = document.getElementById('sensorVoltage');
-      if (voltEl) voltEl.innerText = state.voltage + ' V';
-      const flowEl = document.getElementById('sensorFlow');
-      if (flowEl) flowEl.innerText = state.flowRate + ' L/min';
-      const tempEl = document.getElementById('sensorTemp');
-      if (tempEl) tempEl.innerText = state.waterTemp + '°C';
-      const phEl = document.getElementById('sensorPH');
-      if (phEl) phEl.innerText = state.phValue;
+      document.getElementById('sensorLevel') && (document.getElementById('sensorLevel').innerText = state.waterLevel);
+      document.getElementById('sensorCurrent') && (document.getElementById('sensorCurrent').innerText = state.drumCurrent + ' A');
+      document.getElementById('sensorVoltage') && (document.getElementById('sensorVoltage').innerText = state.voltage + ' V');
+      document.getElementById('sensorFlow') && (document.getElementById('sensorFlow').innerText = state.flowRate + ' L/min');
+      document.getElementById('sensorTemp') && (document.getElementById('sensorTemp').innerText = state.waterTemp + '°C');
+      document.getElementById('sensorPH') && (document.getElementById('sensorPH').innerText = state.phValue);
+      document.getElementById('powerWatts') && (document.getElementById('powerWatts').innerText = state.powerWatts + ' W');
     }
-    
     function updateLogUI() {
-      const logContainer = document.getElementById('logContainer');
-      if (!logContainer) return;
-      if (state.logs.length === 0) {
-        logContainer.innerHTML = '<div class="opacity-50 text-center">Belum ada aktivitas</div>';
-        return;
-      }
-      logContainer.innerHTML = state.logs.map(log => `
-        <div class="log-item">
-          <span style="color:#60a5fa; width:65px">${log.time}</span>
-          <span style="font-weight:600; width:80px">${log.action}:</span>
-          <span>${log.detail}</span>
-        </div>
-      `).join('');
+      const container = document.getElementById('logContainer');
+      if (!container) return;
+      if (state.logs.length === 0) { container.innerHTML = '<div class="text-center opacity-50 text-sm">Belum ada aktivitas</div>'; return; }
+      container.innerHTML = state.logs.map(log => `<div class="flex gap-2 text-xs border-b border-white/10 py-2"><span class="text-blue-300 w-16">${log.time}</span><span class="font-semibold w-24">${log.action}:</span><span>${log.detail}</span></div>`).join('');
     }
-    
     function updateNotificationsUI() {
-      const notifContainer = document.getElementById('notifContainer');
-      if (!notifContainer) return;
-      notifContainer.innerHTML = state.notifications.map(n => `
-        <div class="toast" style="border-left-color: ${n.type === 'error' ? '#ff3b30' : n.type === 'success' ? '#34c759' : '#007aff'}">
-          <i class="fas ${n.type === 'error' ? 'fa-exclamation-triangle' : n.type === 'success' ? 'fa-check-circle' : 'fa-info-circle'}"></i>
-          ${n.msg}
-        </div>
-      `).join('');
+      const container = document.getElementById('notifContainer');
+      if (!container) return;
+      container.innerHTML = state.notifications.map(n => `<div class="toast fixed bottom-4 right-4 z-50 bg-black/80 backdrop-blur-md rounded-2xl px-4 py-2 flex items-center gap-2 text-sm border-l-4" style="border-left-color: ${n.type === 'error' ? '#ef4444' : n.type === 'success' ? '#22c55e' : '#3b82f6'}; animation: fadeInUp 0.3s ease;"><i class="fas ${n.type === 'error' ? 'fa-exclamation-triangle' : n.type === 'success' ? 'fa-check-circle' : 'fa-info-circle'}"></i>${n.msg}</div>`).join('');
     }
-    
-    function formatTime(sec) {
-      if (sec <= 0) return '0:00';
-      const mins = Math.floor(sec / 60);
-      const secs = sec % 60;
-      return `${mins}:${secs.toString().padStart(2,'0')}`;
+    function exportLogs() { /* sama seperti sebelumnya */ if(state.logs.length===0) addNotification('Tidak ada log','info'); else { let csv=[["Waktu","Aksi","Detail"]]; state.logs.forEach(l=>csv.push([l.time,l.action,l.detail])); const blob=new Blob([csv.map(r=>r.join(",")).join("\n")],{type:"text/csv"}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`nusaflow_logs_${new Date().toISOString()}.csv`; a.click(); addLog('Export','Log diekspor'); } }
+    function toggleRdf() { if(state.pumpOnlyMode) setPumpOnly(false); if(state.drumOnlyMode) setDrumOnly(false); state.rdfRunning=!state.rdfRunning; addLog('Manual',`RDF ${state.rdfRunning?'ON':'OFF'}`); addNotification(`RDF ${state.rdfRunning?'ON':'OFF'}`,state.rdfRunning?'success':'error'); updateUI(); }
+    function setPumpOnly(enable){ state.pumpOnlyMode=enable; if(enable){ state.drumOnlyMode=false; state.rdfRunning=false; addLog('Mode','Pump Only aktif'); addNotification('Mode Pump Only','info'); } else { state.pumpOnlyMode=false; } updateUI(); }
+    function setDrumOnly(enable){ state.drumOnlyMode=enable; if(enable){ state.pumpOnlyMode=false; state.rdfRunning=true; addLog('Mode','Drum Only aktif'); addNotification('Mode Drum Only','info'); } else { state.drumOnlyMode=false; } updateUI(); }
+    function setNormalMode(){ state.pumpOnlyMode=false; state.drumOnlyMode=false; addLog('Mode','Mode Normal'); addNotification('Mode Normal','info'); updateUI(); }
+    function setDrumSpeed(val){ state.drumSpeed=parseInt(val); addLog('Kecepatan',`Drum speed ${state.drumSpeed}%`); updateUI(); }
+    function toggleAerator(){ state.aeratorOn=!state.aeratorOn; addLog('Aerator',state.aeratorOn?'ON':'OFF'); addNotification(`Aerator ${state.aeratorOn?'ON':'OFF`,'info'); updateUI(); }
+    function toggleUV(){ state.uvLightOn=!state.uvLightOn; addLog('UV Lamp',state.uvLightOn?'ON':'OFF'); addNotification(`UV Lamp ${state.uvLightOn?'ON':'OFF`,'info'); updateUI(); }
+    function emergencyStop(){ state.rdfRunning=false; state.pumpOnlyMode=false; state.drumOnlyMode=false; state.aeratorOn=false; state.uvLightOn=false; addLog('EMERGENCY','Semua mati'); addNotification('🚨 EMERGENCY STOP','error'); playBeep(); updateUI(); }
+    function addSchedule(hour,minute,onOff){ state.schedules.push({id:Date.now(),hour,minute,onOff}); addLog('Schedule',`Jadwal ${hour}:${minute} RDF ${onOff?'ON':'OFF'}`); updateScheduleUI(); }
+    function removeSchedule(id){ state.schedules=state.schedules.filter(s=>s.id!==id); addLog('Schedule','Hapus jadwal'); updateScheduleUI(); }
+    function clearSchedules(){ state.schedules=[]; addLog('Schedule','Semua jadwal dihapus'); updateScheduleUI(); }
+    function startScheduleChecker(){ if(scheduleCheckInterval) clearInterval(scheduleCheckInterval); scheduleCheckInterval=setInterval(()=>{ const now=new Date(); const curHour=now.getHours(), curMin=now.getMinutes(); state.schedules.forEach(s=>{ if(s.hour===curHour && s.minute===curMin){ if(s.onOff && !state.rdfRunning) toggleRdf(); else if(!s.onOff && state.rdfRunning) toggleRdf(); addLog('Schedule',`Eksekusi jadwal ${s.hour}:${s.minute} -> RDF ${s.onOff?'ON':'OFF'}`); } }); },60000); }
+    function openSettingsModal(){ let newMax=prompt('Max arus (A):',state.thresholds.maxCurrent); let newMinPh=prompt('Min pH:',state.thresholds.minPh); let newMaxPh=prompt('Max pH:',state.thresholds.maxPh); let newTemp=prompt('Max suhu (°C):',state.thresholds.maxTemp); if(newMax) state.thresholds.maxCurrent=parseFloat(newMax); if(newMinPh) state.thresholds.minPh=parseFloat(newMinPh); if(newMaxPh) state.thresholds.maxPh=parseFloat(newMaxPh); if(newTemp) state.thresholds.maxTemp=parseFloat(newTemp); addLog('Settings','Threshold diperbarui'); addNotification('Threshold disimpan','success'); }
+    function toggleTheme(){ state.darkMode=!state.darkMode; const body=document.body; if(state.darkMode){ body.style.background="radial-gradient(circle at 10% 20%, #001e3a, #000c1a)"; } else { body.style.background="#e0f2fe"; } updateUI(); }
+    function resetSystem(){ state.rdfRunning=false; state.pumpOnlyMode=false; state.drumOnlyMode=false; state.aeratorOn=false; state.uvLightOn=false; state.schedules=[]; state.drumSpeed=70; addLog('System','Reset semua'); addNotification('System direset','success'); updateUI(); updateScheduleUI(); }
+    function updateUI(){
+      const rdfStatus=document.getElementById('rdfStatus'); if(rdfStatus){ rdfStatus.innerText=state.rdfRunning?'BERJALAN':'BERHENTI'; rdfStatus.className=`px-3 py-1 rounded-full text-xs font-bold ${state.rdfRunning?'bg-green-500/40 text-green-200':'bg-red-500/40 text-red-200'}`; }
+      const pumpBtn=document.getElementById('btnPumpOnly'), drumBtn=document.getElementById('btnDrumOnly'), normalBtn=document.getElementById('btnNormal');
+      if(pumpBtn) pumpBtn.classList.toggle('bg-cyan-600',state.pumpOnlyMode);
+      if(drumBtn) drumBtn.classList.toggle('bg-cyan-600',state.drumOnlyMode);
+      if(normalBtn) normalBtn.classList.toggle('bg-cyan-600',!state.pumpOnlyMode && !state.drumOnlyMode);
+      const speedSlider=document.getElementById('drumSpeedSlider'), speedVal=document.getElementById('speedValue');
+      if(speedSlider) speedSlider.value=state.drumSpeed;
+      if(speedVal) speedVal.innerText=state.drumSpeed+'%';
+      const aeratorBtn=document.getElementById('aeratorBtn'), uvBtn=document.getElementById('uvBtn');
+      if(aeratorBtn){ aeratorBtn.innerHTML=`<i class="fas fa-fan"></i> Aerator ${state.aeratorOn?'ON':'OFF'}`; aeratorBtn.classList.toggle('bg-green-600',state.aeratorOn); }
+      if(uvBtn){ uvBtn.innerHTML=`<i class="fas fa-sun"></i> UV Lamp ${state.uvLightOn?'ON':'OFF'}`; uvBtn.classList.toggle('bg-purple-600',state.uvLightOn); }
+      const modeInfo=document.getElementById('modeInfo'); if(modeInfo){ if(state.pumpOnlyMode) modeInfo.innerText='Pump Only'; else if(state.drumOnlyMode) modeInfo.innerText='Drum Only'; else if(state.schedules.length>0) modeInfo.innerText='Scheduled'; else modeInfo.innerText='Manual'; }
+      const themeIcon=document.getElementById('themeIcon'); if(themeIcon) themeIcon.className=`fas ${state.darkMode?'fa-sun':'fa-moon'}`;
+      const powerEl=document.getElementById('powerWatts'); if(powerEl) powerEl.innerText=state.powerWatts+' W';
     }
-    
-    // Jam realtime
-    function updateClock() {
-      const now = new Date();
-      const timeStr = now.toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
-      const dateStr = now.toLocaleDateString('id-ID', { day:'numeric', month:'long', year:'numeric' });
-      const clockEl = document.getElementById('clockTime');
-      const dateEl = document.getElementById('clockDate');
-      if (clockEl) clockEl.innerText = timeStr;
-      if (dateEl) dateEl.innerText = dateStr;
+    function updateScheduleUI(){
+      const container=document.getElementById('scheduleList'); if(!container) return;
+      if(state.schedules.length===0){ container.innerHTML='<div class="text-center text-xs opacity-60">Belum ada jadwal</div>'; return; }
+      container.innerHTML=state.schedules.map(s=>`<div class="flex justify-between items-center bg-white/10 rounded-lg p-2 mb-2"><span class="text-sm font-mono">${s.hour.toString().padStart(2,'0')}:${s.minute.toString().padStart(2,'0')} → RDF ${s.onOff?'ON':'OFF'}</span><button onclick="window.removeScheduleById(${s.id})" class="text-red-400 text-xs"><i class="fas fa-trash"></i></button></div>`).join('');
     }
-    setInterval(updateClock, 1000);
-    
-    // Render seluruh UI (HTML)
-    function renderApp() {
-      const app = document.getElementById('app');
-      if (!app) return;
-      app.innerHTML = `
-        <div class="container">
-          <!-- Header + Jam -->
-          <div class="glass" style="padding: 20px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
-            <div>
-              <h1 style="font-size: 1.8rem; font-weight: 700; background: linear-gradient(135deg,#90e0ff,#0077b6); -webkit-background-clip: text; background-clip: text; color: transparent;">NusaFlow Koi</h1>
-              <p style="font-size: 0.7rem; opacity:0.7;">RDF Control • Kolam Ikan Koi</p>
-            </div>
-            <div style="text-align: right;">
-              <div style="font-size: 1.6rem; font-weight: 600; letter-spacing: 1px;" id="clockTime">--:--:--</div>
-              <div style="font-size: 0.7rem; opacity:0.7;" id="clockDate">---</div>
-            </div>
+    window.removeScheduleById = (id) => removeSchedule(id);
+    window.addScheduleFromUI = () => {
+      const hour=parseInt(document.getElementById('scheduleHour').value);
+      const minute=parseInt(document.getElementById('scheduleMinute').value);
+      const onOff=document.getElementById('scheduleAction').value==='on';
+      if(!isNaN(hour) && !isNaN(minute) && hour>=0 && hour<=23 && minute>=0 && minute<=59) addSchedule(hour,minute,onOff);
+    };
+    function initChart(){
+      const ctx=document.getElementById('trendChart').getContext('2d');
+      chartInstance=new Chart(ctx,{
+        type:'line',
+        data:{ labels:state.labels, datasets:[
+          { label:'Suhu (°C)', data:state.tempHistory, borderColor:'#f97316', backgroundColor:'transparent', tension:0.2, fill:false },
+          { label:'pH', data:state.phHistory, borderColor:'#a855f7', backgroundColor:'transparent', tension:0.2, fill:false, yAxisID:'y1' },
+          { label:'Tegangan (V)', data:state.voltageHistory, borderColor:'#3b82f6', backgroundColor:'transparent', tension:0.2, fill:false }
+        ] },
+        options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'top', labels:{ color:state.darkMode?'white':'black' } } }, scales:{ y:{ title:{ display:true, text:'Suhu / Tegangan', color:'#ccc' } }, y1:{ position:'right', title:{ text:'pH', color:'#ccc' } } } }
+      });
+    }
+    // Render utama dengan katalog produk (3 produk)
+    function renderApp(){
+      const app=document.getElementById('app');
+      app.innerHTML=`
+        <div class="max-w-7xl mx-auto">
+          <!-- Header with emergency & theme -->
+          <div class="glass-card p-5 mb-6 flex flex-wrap justify-between items-center gap-4">
+            <div><h1 class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-300 to-cyan-200 bg-clip-text text-transparent">NusaFlow Koi Pro</h1><p class="text-xs opacity-70">RDF Smart Control + Catalog</p></div>
+            <div class="flex gap-2"><button id="emergencyBtn" class="emergency-btn bg-red-600 px-4 py-2 rounded-full text-sm font-bold"><i class="fas fa-exclamation-triangle"></i> EMERGENCY STOP</button><button id="themeBtn" class="bg-white/10 px-3 py-2 rounded-full"><i id="themeIcon" class="fas fa-sun"></i></button></div>
           </div>
           
-          <div class="grid-2">
-            <!-- Kolom Kiri: Kontrol -->
-            <div class="space-y-4" style="display: flex; flex-direction: column; gap: 1rem;">
-              <div class="glass" style="padding: 20px;">
-                <h3 style="margin-bottom: 12px;"><i class="fas fa-water-pump"></i> RDF Drum Filter</h3>
-                <div style="display: flex; justify-content: space-between; margin-bottom: 16px;">
-                  <span>Status</span>
-                  <span id="rdfStatus" class="badge">BERHENTI</span>
-                </div>
-                <button id="toggleRdfBtn" class="primary" style="width:100%"><i class="fas fa-play-circle"></i> Nyalakan RDF</button>
-              </div>
-              
-              <div class="glass" style="padding: 20px;">
-                <h3 style="margin-bottom: 12px;"><i class="fas fa-sliders-h"></i> Mode Operasi</h3>
-                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                  <button id="btnPumpOnly"><i class="fas fa-tint"></i> Pump Only</button>
-                  <button id="btnDrumOnly"><i class="fas fa-cogs"></i> Drum Only</button>
-                  <button id="btnNormal"><i class="fas fa-sync-alt"></i> Normal</button>
-                </div>
-                <div style="margin-top: 12px; font-size:0.75rem;">Mode saat ini: <span id="modeInfo">Manual</span></div>
-              </div>
-              
-              <div class="glass" style="padding: 20px;">
-                <h3 style="margin-bottom: 12px;"><i class="far fa-clock"></i> Timer RDF</h3>
-                <div id="timerPanel"></div>
-              </div>
-              
-              <button id="resetBtn" class="danger" style="background:#ff3b30; padding:12px"><i class="fas fa-undo-alt"></i> Reset System</button>
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Kiri: Kontrol (sama seperti sebelumnya) -->
+            <div class="space-y-5">
+              <div class="glass-card p-5"><h3 class="font-semibold mb-3"><i class="fas fa-water-pump"></i> RDF Drum</h3><div class="flex justify-between mb-4"><span>Status</span><span id="rdfStatus" class="px-3 py-1 rounded-full text-xs bg-red-500/40">BERHENTI</span></div><button id="toggleRdfBtn" class="w-full bg-blue-600 py-2 rounded-full mb-3"><i class="fas fa-play"></i> Nyalakan RDF</button><div class="mt-3"><label class="text-sm">Kecepatan Drum: <span id="speedValue">70%</span></label><input type="range" id="drumSpeedSlider" min="0" max="100" value="70" class="w-full"></div></div>
+              <div class="glass-card p-5"><h3 class="font-semibold mb-3"><i class="fas fa-sliders-h"></i> Mode Operasi</h3><div class="flex flex-wrap gap-2"><button id="btnPumpOnly" class="flex-1 py-2 rounded-full bg-white/10"><i class="fas fa-tint"></i> Pump Only</button><button id="btnDrumOnly" class="flex-1 py-2 rounded-full bg-white/10"><i class="fas fa-cogs"></i> Drum Only</button><button id="btnNormal" class="flex-1 py-2 rounded-full bg-white/10"><i class="fas fa-sync-alt"></i> Normal</button></div><div class="mt-2 text-xs">Mode: <span id="modeInfo">Manual</span></div></div>
+              <div class="glass-card p-5"><h3 class="font-semibold mb-3"><i class="fas fa-clock"></i> Jadwal Timer</h3><div class="flex gap-2 mb-2"><input type="number" id="scheduleHour" placeholder="Jam" class="w-1/3 bg-black/30 rounded-full px-3 py-1"><input type="number" id="scheduleMinute" placeholder="Menit" class="w-1/3 bg-black/30 rounded-full px-3 py-1"><select id="scheduleAction" class="bg-black/30 rounded-full px-2"><option value="on">ON</option><option value="off">OFF</option></select><button id="addScheduleBtn" class="bg-blue-500 px-3 rounded-full">+</button></div><div id="scheduleList" class="max-h-32 overflow-y-auto"></div><button id="clearSchedulesBtn" class="text-xs text-red-300 mt-2">Hapus Semua</button></div>
+              <div class="glass-card p-5"><h3 class="font-semibold mb-3"><i class="fas fa-plug"></i> Perangkat Lain</h3><div class="flex gap-2"><button id="aeratorBtn" class="flex-1 py-2 rounded-full bg-white/10"><i class="fas fa-fan"></i> Aerator OFF</button><button id="uvBtn" class="flex-1 py-2 rounded-full bg-white/10"><i class="fas fa-sun"></i> UV Lamp OFF</button></div></div>
+              <button id="resetBtn" class="w-full bg-red-500/40 py-2 rounded-full"><i class="fas fa-undo-alt"></i> Reset System</button>
+              <button id="settingsBtn" class="w-full bg-gray-500/40 py-2 rounded-full"><i class="fas fa-cog"></i> Set Threshold</button>
+              <button id="exportLogBtn" class="w-full bg-green-600/40 py-2 rounded-full"><i class="fas fa-download"></i> Export Log CSV</button>
             </div>
             
-            <!-- Kolom Kanan: Sensor & Log -->
-            <div style="display: flex; flex-direction: column; gap: 1rem;">
-              <div class="glass" style="padding: 20px;">
-                <h3 style="margin-bottom: 12px;"><i class="fas fa-microchip"></i> Monitoring Kolam</h3>
-                <div class="sensor-grid">
-                  <div><i class="fas fa-water"></i> Level Air: <strong id="sensorLevel">MEDIUM</strong></div>
-                  <div><i class="fas fa-bolt"></i> Arus Drum: <strong id="sensorCurrent">0.8 A</strong></div>
-                  <div><i class="fas fa-charging-station"></i> Tegangan: <strong id="sensorVoltage">12.3 V</strong></div>
-                  <div><i class="fas fa-tachometer-alt"></i> Flow Rate: <strong id="sensorFlow">85 L/min</strong></div>
-                  <div><i class="fas fa-thermometer-half"></i> Suhu: <strong id="sensorTemp">26.5°C</strong></div>
-                  <div><i class="fas fa-flask"></i> pH: <strong id="sensorPH">7.2</strong></div>
-                </div>
+            <!-- Kanan: Monitoring & Grafik + Katalog Produk -->
+            <div class="lg:col-span-2 space-y-5">
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div id="sensorLevelCard" class="glass-card p-3 text-center rounded-xl"><i class="fas fa-water"></i><div class="text-xl font-bold" id="sensorLevel">MEDIUM</div><div class="text-xs">Level Air</div></div>
+                <div id="sensorCurrentCard" class="glass-card p-3 text-center rounded-xl"><i class="fas fa-bolt"></i><div class="text-xl font-bold" id="sensorCurrent">0.8 A</div><div class="text-xs">Arus Drum</div></div>
+                <div class="glass-card p-3 text-center rounded-xl"><i class="fas fa-charging-station"></i><div class="text-xl font-bold" id="sensorVoltage">12.3 V</div><div class="text-xs">Tegangan</div></div>
+                <div class="glass-card p-3 text-center rounded-xl"><i class="fas fa-tachometer-alt"></i><div class="text-xl font-bold" id="sensorFlow">85 L/min</div><div class="text-xs">Flow Rate</div></div>
+                <div id="sensorTempCard" class="glass-card p-3 text-center rounded-xl"><i class="fas fa-thermometer-half"></i><div class="text-xl font-bold" id="sensorTemp">26.5°C</div><div class="text-xs">Suhu</div></div>
+                <div id="sensorPHCard" class="glass-card p-3 text-center rounded-xl"><i class="fas fa-flask"></i><div class="text-xl font-bold" id="sensorPH">7.2</div><div class="text-xs">pH</div></div>
+                <div class="glass-card p-3 text-center rounded-xl"><i class="fas fa-charging-station"></i><div class="text-xl font-bold" id="powerWatts">0 W</div><div class="text-xs">Daya</div></div>
+                <div class="glass-card p-3 text-center rounded-xl"><i class="fas fa-wifi"></i><div class="text-xl font-bold">Mock</div><div class="text-xs">ESP32</div></div>
               </div>
               
-              <div class="glass" style="padding: 20px;">
-                <h3 style="margin-bottom: 12px;"><i class="fas fa-list-alt"></i> Log Aktivitas <button id="clearLogBtn" style="float:right; background:transparent; font-size:0.7rem;">Clear</button></h3>
-                <div id="logContainer" class="log-area"></div>
+              <div class="glass-card p-4"><h3 class="font-semibold mb-2"><i class="fas fa-chart-line"></i> Tren Sensor (30 titik)</h3><div class="h-64"><canvas id="trendChart"></canvas></div></div>
+              
+              <!-- KATALOG PRODUK (mirip Instagram) -->
+              <div class="glass-card p-5">
+                <h3 class="font-semibold text-xl mb-4 flex items-center gap-2"><i class="fab fa-instagram"></i> Katalog Produk RDF</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+                  <!-- Produk 1 ton -->
+                  <div class="product-card glass-card p-4 text-center rounded-2xl" onclick="window.showProductDetail('1 ton')">
+                    <div class="w-full h-40 bg-gray-800 rounded-xl flex items-center justify-center overflow-hidden">
+                      <img id="img1ton" src="https://via.placeholder.com/300x200?text=RDF+1+Ton" alt="RDF 1 Ton" class="w-full h-full object-cover">
+                    </div>
+                    <h4 class="font-bold mt-3">RDF 1 Ton</h4>
+                    <p class="text-xs opacity-70">Kapasitas 1000L, ideal kolam kecil</p>
+                    <div class="mt-2 text-blue-300 text-sm"><i class="fas fa-tag"></i> Harga: Call</div>
+                  </div>
+                  <!-- Produk 3 ton -->
+                  <div class="product-card glass-card p-4 text-center rounded-2xl" onclick="window.showProductDetail('3 ton')">
+                    <div class="w-full h-40 bg-gray-800 rounded-xl flex items-center justify-center">
+                      <img id="img3ton" src="https://via.placeholder.com/300x200?text=RDF+3+Ton" alt="RDF 3 Ton" class="w-full h-full object-cover">
+                    </div>
+                    <h4 class="font-bold mt-3">RDF 3 Ton</h4>
+                    <p class="text-xs opacity-70">Kapasitas 3000L, untuk kolam menengah</p>
+                    <div class="mt-2 text-blue-300 text-sm"><i class="fas fa-tag"></i> Harga: Call</div>
+                  </div>
+                  <!-- Produk 5 ton -->
+                  <div class="product-card glass-card p-4 text-center rounded-2xl" onclick="window.showProductDetail('5 ton')">
+                    <div class="w-full h-40 bg-gray-800 rounded-xl flex items-center justify-center">
+                      <img id="img5ton" src="https://via.placeholder.com/300x200?text=RDF+5+Ton" alt="RDF 5 Ton" class="w-full h-full object-cover">
+                    </div>
+                    <h4 class="font-bold mt-3">RDF 5 Ton</h4>
+                    <p class="text-xs opacity-70">Kapasitas 5000L, untuk kolam besar</p>
+                    <div class="mt-2 text-blue-300 text-sm"><i class="fas fa-tag"></i> Harga: Call</div>
+                  </div>
+                </div>
+                <div class="text-center text-xs opacity-50 mt-4">Klik card untuk info lebih lanjut (simulasi)</div>
               </div>
+              
+              <div class="glass-card p-4"><div class="flex justify-between mb-2"><h3 class="font-semibold"><i class="fas fa-list-alt"></i> Log Aktivitas</h3><button id="clearLogBtn" class="text-xs bg-white/10 px-2 py-1 rounded-full">Clear</button></div><div id="logContainer" class="h-48 overflow-y-auto"></div></div>
             </div>
           </div>
-          <div style="text-align: center; font-size:0.6rem; opacity:0.4; margin-top: 24px;">NusaFlow Koi v3.0 • RDF Founder Edition • Simulasi lengkap</div>
+          <div class="text-center text-[10px] opacity-40 mt-6">NusaFlow Koi Pro • RDF Founder Edition • Real-time Simulation • Katalog Produk</div>
         </div>
         <div id="notifContainer"></div>
       `;
       
-      // Pasang event listeners setelah render
-      document.getElementById('btnPumpOnly')?.addEventListener('click', () => setPumpOnly(true));
-      document.getElementById('btnDrumOnly')?.addEventListener('click', () => setDrumOnly(true));
-      document.getElementById('btnNormal')?.addEventListener('click', () => setNormalMode());
+      // Pasang event listener
       document.getElementById('toggleRdfBtn')?.addEventListener('click', toggleRdf);
+      document.getElementById('btnPumpOnly')?.addEventListener('click', ()=>setPumpOnly(true));
+      document.getElementById('btnDrumOnly')?.addEventListener('click', ()=>setDrumOnly(true));
+      document.getElementById('btnNormal')?.addEventListener('click', setNormalMode);
+      document.getElementById('emergencyBtn')?.addEventListener('click', emergencyStop);
+      document.getElementById('themeBtn')?.addEventListener('click', toggleTheme);
+      document.getElementById('drumSpeedSlider')?.addEventListener('input', (e)=>setDrumSpeed(e.target.value));
+      document.getElementById('aeratorBtn')?.addEventListener('click', toggleAerator);
+      document.getElementById('uvBtn')?.addEventListener('click', toggleUV);
       document.getElementById('resetBtn')?.addEventListener('click', resetSystem);
-      document.getElementById('clearLogBtn')?.addEventListener('click', () => { state.logs = []; updateLogUI(); addLog('System','Log dibersihkan'); });
+      document.getElementById('settingsBtn')?.addEventListener('click', openSettingsModal);
+      document.getElementById('exportLogBtn')?.addEventListener('click', exportLogs);
+      document.getElementById('clearLogBtn')?.addEventListener('click', ()=>{ state.logs=[]; updateLogUI(); });
+      document.getElementById('addScheduleBtn')?.addEventListener('click', ()=>window.addScheduleFromUI());
+      document.getElementById('clearSchedulesBtn')?.addEventListener('click', clearSchedules);
       
-      // Initial UI update
+      // Ganti gambar placeholder dengan link yang bisa diubah nanti
+      // Jika Anda punya link gambar sendiri, ganti src di atas atau di sini
+      // Contoh: document.getElementById('img1ton').src = "URL_GAMBAR_ANDA";
+      
       updateUI();
       updateSensorUI();
       updateLogUI();
-      updateClock();
+      updateScheduleUI();
+      initChart();
       startSensorSimulation();
+      startScheduleChecker();
     }
     
-    // Tunggu loading selesai lalu render
-    const checkLoading = setInterval(() => {
-      if (!document.getElementById('loadingProgress') || progress >= 100) {
-        clearInterval(checkLoading);
-        renderApp();
-      }
-    }, 200);
+    window.showProductDetail = (product) => {
+      addNotification(`Detail produk RDF ${product} - Hubungi CS untuk info lebih lanjut`, 'info');
+    };
+    
+    renderApp();
   })();
 </script>
 </body>
