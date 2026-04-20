@@ -20,7 +20,7 @@
       color: white;
     }
 
-    /* Container full width */
+    /* Container */
     .container {
       width: 100%;
       max-width: 100%;
@@ -39,7 +39,7 @@
       margin-bottom: 16px;
     }
 
-    /* Header */
+    /* Header dengan jam */
     .header {
       display: flex;
       justify-content: space-between;
@@ -48,7 +48,7 @@
       margin-bottom: 20px;
       gap: 12px;
     }
-    .header h1 {
+    .header-left h1 {
       font-size: 1.8rem;
       font-weight: 700;
       background: linear-gradient(135deg, #c084fc, #a855f7);
@@ -56,12 +56,29 @@
       background-clip: text;
       color: transparent;
     }
-    .header p {
+    .header-left p {
+      font-size: 0.7rem;
+      opacity: 0.7;
+    }
+    .clock {
+      text-align: right;
+      background: rgba(0,0,0,0.3);
+      padding: 6px 14px;
+      border-radius: 30px;
+      backdrop-filter: blur(8px);
+    }
+    .clock .time {
+      font-size: 1.4rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      font-feature-settings: 'tnum';
+    }
+    .clock .date {
       font-size: 0.7rem;
       opacity: 0.7;
     }
 
-    /* Tombol umum */
+    /* Tombol */
     button {
       background: rgba(255, 255, 255, 0.12);
       border: none;
@@ -83,7 +100,7 @@
       50% { box-shadow: 0 0 0 6px rgba(220, 38, 38, 0); }
     }
 
-    /* Toggle switch (model slide) */
+    /* Toggle switch */
     .toggle-group {
       display: flex;
       gap: 20px;
@@ -143,6 +160,18 @@
       transform: translateX(24px);
     }
 
+    /* Action buttons bar - diperbaiki jarak */
+    .action-bar {
+      display: flex;
+      gap: 12px;
+      margin: 8px 0 20px 0;
+    }
+    .action-bar button {
+      flex: 1;
+      font-size: 0.8rem;
+      padding: 10px 0;
+    }
+
     /* Sensor grid */
     .sensor-grid {
       display: grid;
@@ -166,7 +195,7 @@
       margin-top: 4px;
     }
 
-    /* Katalog produk grid */
+    /* Katalog produk - gambar lokal placeholder */
     .product-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
@@ -182,6 +211,13 @@
       transition: 0.2s;
     }
     .product-card:active { transform: scale(0.96); }
+    .product-card img {
+      width: 80px;
+      height: 80px;
+      object-fit: contain;
+      margin-bottom: 8px;
+      border-radius: 16px;
+    }
 
     /* Log area */
     .log-area {
@@ -196,7 +232,7 @@
       gap: 8px;
     }
 
-    /* Toast notifikasi */
+    /* Toast */
     .toast {
       position: fixed;
       bottom: 16px;
@@ -269,14 +305,6 @@
       font-size: 0.8rem;
     }
     input:focus, select:focus { outline: none; }
-
-    /* Action buttons */
-    .action-buttons {
-      display: flex;
-      gap: 10px;
-      margin-top: 8px;
-    }
-    .action-buttons button { flex: 1; }
   </style>
 </head>
 <body>
@@ -343,6 +371,22 @@
     let chart = null;
     let sensorInterval = null;
     let scheduleInterval = null;
+    let clockInterval = null;
+
+    // ========== CLOCK ==========
+    function updateClock() {
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
+      const dateStr = now.toLocaleDateString('id-ID', { day:'numeric', month:'long', year:'numeric' });
+      const timeEl = document.getElementById('clockTime');
+      const dateEl = document.getElementById('clockDate');
+      if (timeEl) timeEl.innerText = timeStr;
+      if (dateEl) dateEl.innerText = dateStr;
+    }
+    function startClock() {
+      updateClock();
+      clockInterval = setInterval(updateClock, 1000);
+    }
 
     // ========== HELPER ==========
     function addLog(action, detail) {
@@ -558,7 +602,6 @@
         addNotif('Mode Pump Only', 'info');
       }
       updateUI();
-      // update toggle lain
       const drumToggle = document.getElementById('drumOnlyToggle');
       if (drumToggle) drumToggle.checked = state.drumOnly;
     }
@@ -678,8 +721,14 @@
       app.innerHTML = `
         <div class="container">
           <div class="header">
-            <div><h1>NusaFlow Koi</h1><p>RDF Smart Control System</p></div>
-            <button id="emergencyBtn" class="emergency btn-danger" style="padding:8px 14px;"><i class="fas fa-exclamation-triangle"></i> STOP</button>
+            <div class="header-left">
+              <h1>NusaFlow Koi</h1>
+              <p>RDF Smart Control System</p>
+            </div>
+            <div class="clock">
+              <div class="time" id="clockTime">--:--:--</div>
+              <div class="date" id="clockDate">---</div>
+            </div>
           </div>
 
           <!-- RDF Control -->
@@ -736,8 +785,8 @@
             </div>
           </div>
 
-          <!-- Tombol Aksi -->
-          <div class="action-buttons">
+          <!-- Action Bar (Reset, Threshold, Export) - jarak sudah diperbaiki -->
+          <div class="action-bar">
             <button id="resetBtn" class="btn-warning"><i class="fas fa-undo-alt"></i> Reset</button>
             <button id="settingsBtn" style="background:rgba(255,255,255,0.1);"><i class="fas fa-cog"></i> Threshold</button>
             <button id="exportLogBtn" style="background:rgba(34,197,94,0.3);"><i class="fas fa-download"></i> Export</button>
@@ -761,14 +810,30 @@
             <div style="height:180px;"><canvas id="trendChart"></canvas></div>
           </div>
 
-          <!-- Katalog Produk -->
+          <!-- Katalog Produk dengan gambar lokal (placeholder) -->
           <div class="card" style="padding:12px;">
             <h3 style="font-size:1rem; margin-bottom:10px;"><i class="fab fa-instagram"></i> Katalog Produk RDF</h3>
             <div class="product-grid">
-              <div class="product-card" onclick="window.showProduct('1 Ton')"><div style="font-size:2rem;">📦</div><div class="font-bold">RDF 1 Ton</div><div class="text-xs">Kapasitas 1000L</div></div>
-              <div class="product-card" onclick="window.showProduct('3 Ton')"><div style="font-size:2rem;">📦</div><div class="font-bold">RDF 3 Ton</div><div class="text-xs">Kapasitas 3000L</div></div>
-              <div class="product-card" onclick="window.showProduct('5 Ton')"><div style="font-size:2rem;">📦</div><div class="font-bold">RDF 5 Ton</div><div class="text-xs">Kapasitas 5000L</div></div>
-              <div class="product-card" onclick="window.showProduct('Custom')"><div style="font-size:2rem;">⚙️</div><div class="font-bold">Custom</div><div class="text-xs">Sesuai kebutuhan</div></div>
+              <div class="product-card" onclick="window.showProduct('1 Ton')">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%237c3aed'/%3E%3Ctext x='50' y='55' font-size='40' text-anchor='middle' fill='white' dy='.3em'%3E1t%3C/text%3E%3C/svg%3E" alt="RDF 1 Ton">
+                <div class="font-bold mt-2">RDF 1 Ton</div>
+                <div class="text-xs">Kapasitas 1000L</div>
+              </div>
+              <div class="product-card" onclick="window.showProduct('3 Ton')">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%237c3aed'/%3E%3Ctext x='50' y='55' font-size='40' text-anchor='middle' fill='white' dy='.3em'%3E3t%3C/text%3E%3C/svg%3E" alt="RDF 3 Ton">
+                <div class="font-bold mt-2">RDF 3 Ton</div>
+                <div class="text-xs">Kapasitas 3000L</div>
+              </div>
+              <div class="product-card" onclick="window.showProduct('5 Ton')">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%237c3aed'/%3E%3Ctext x='50' y='55' font-size='40' text-anchor='middle' fill='white' dy='.3em'%3E5t%3C/text%3E%3C/svg%3E" alt="RDF 5 Ton">
+                <div class="font-bold mt-2">RDF 5 Ton</div>
+                <div class="text-xs">Kapasitas 5000L</div>
+              </div>
+              <div class="product-card" onclick="window.showProduct('Custom')">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%236b21a8'/%3E%3Ctext x='50' y='55' font-size='40' text-anchor='middle' fill='white' dy='.3em'%3E⚙%3C/text%3E%3C/svg%3E" alt="Custom">
+                <div class="font-bold mt-2">Custom</div>
+                <div class="text-xs">Sesuai kebutuhan</div>
+              </div>
             </div>
             <p class="text-center text-[10px] opacity-50 mt-2">Klik untuk info produk</p>
           </div>
@@ -808,6 +873,7 @@
       initChart();
       startSensorSim();
       startScheduleChecker();
+      startClock();
     }
 
     window.showProduct = (name) => {
