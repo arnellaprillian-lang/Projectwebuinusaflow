@@ -2,51 +2,37 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>NusaFlow Koi Pro | RDF Control & Product Catalog</title>
-  <!-- Tailwind + Font Awesome + Chart.js -->
-  <script src="https://cdn.tailwindcss.com"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
+  <title>NusaFlow Koi | RDF Control</title>
+  <!-- Font Awesome 6 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- Chart.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
-    /* Custom animations & glassmorphism biru transparan */
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     }
-    @keyframes pulse-red {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
-      50% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+    body {
+      background: radial-gradient(circle at 10% 20%, #001d3d, #000b17);
+      min-height: 100vh;
+      padding: 12px;
+      color: white;
     }
-    @keyframes blink {
-      from { background-color: rgba(239, 68, 68, 0.3); border-color: #ef4444; }
-      to { background-color: rgba(239, 68, 68, 0.8); border-color: #dc2626; }
-    }
-    .glass-card {
+    /* Glassmorphism biru transparan khas pertama */
+    .glass {
       background: rgba(15, 35, 70, 0.55);
       backdrop-filter: blur(16px);
       border: 1px solid rgba(59, 130, 246, 0.4);
-      border-radius: 2rem;
+      border-radius: 28px;
       transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
     }
-    .glass-card:hover {
+    .glass:hover {
       background: rgba(25, 55, 100, 0.65);
       border-color: rgba(59, 130, 246, 0.7);
-      transform: translateY(-3px);
-    }
-    .product-card {
-      transition: all 0.3s ease;
-      cursor: pointer;
-    }
-    .product-card:hover {
-      transform: scale(1.02) translateY(-5px);
-      box-shadow: 0 20px 25px -12px rgba(0, 0, 0, 0.3);
-    }
-    .emergency-btn {
-      animation: pulse-red 1s infinite;
-    }
-    .blink-red {
-      animation: blink 0.5s step-end infinite alternate;
+      transform: translateY(-2px);
     }
     /* Loading screen */
     .loading-screen {
@@ -60,144 +46,245 @@
       align-items: center;
       justify-content: center;
       z-index: 2000;
-      transition: opacity 0.6s ease;
+      transition: opacity 0.5s;
     }
     .loading-content {
       text-align: center;
       animation: fadeInUp 0.5s;
     }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
     .loading-bar {
-      width: 260px;
-      height: 6px;
+      width: 220px;
+      height: 5px;
       background: rgba(255,255,255,0.2);
       border-radius: 10px;
-      margin-top: 24px;
+      margin-top: 20px;
       overflow: hidden;
     }
     .loading-progress {
       width: 0%;
       height: 100%;
       background: linear-gradient(90deg, #3b82f6, #00b4ff);
-      transition: width 0.2s ease;
+      transition: width 0.2s;
     }
-    /* Custom scrollbar */
-    ::-webkit-scrollbar { width: 5px; }
+    /* Tombol & animasi */
+    button {
+      transition: all 0.2s ease;
+      cursor: pointer;
+      border: none;
+      background: rgba(255,255,255,0.1);
+      color: white;
+      border-radius: 40px;
+      padding: 8px 14px;
+      font-weight: 500;
+    }
+    button:active { transform: scale(0.96); }
+    .btn-primary { background: #007aff; }
+    .btn-danger { background: #ff3b30; }
+    .btn-warning { background: #ff9500; }
+    .emergency-btn { animation: pulseRed 1s infinite; }
+    @keyframes pulseRed {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.4); }
+      50% { box-shadow: 0 0 0 8px rgba(255, 59, 48, 0); }
+    }
+    .blink-red {
+      animation: blink 0.5s step-end infinite alternate;
+    }
+    @keyframes blink {
+      from { background: rgba(239,68,68,0.3); border-color: #ef4444; }
+      to { background: rgba(239,68,68,0.8); border-color: #dc2626; }
+    }
+    /* Grid responsif */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+    @media (min-width: 768px) {
+      body { padding: 20px; }
+      .grid-2 { grid-template-columns: 1fr 1.8fr; }
+    }
+    .sensor-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+    @media (min-width: 500px) {
+      .sensor-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    @media (min-width: 640px) {
+      .product-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    .product-card {
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .product-card:active { transform: scale(0.97); }
+    /* Scroll */
+    ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: rgba(255,255,255,0.1); border-radius: 10px; }
     ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 10px; }
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 16px;
+      right: 16px;
+      z-index: 1100;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(12px);
+      border-radius: 30px;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      animation: slideIn 0.3s ease;
+      border-left: 3px solid;
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(100px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
   </style>
 </head>
-<body class="transition-colors duration-300" style="background: radial-gradient(circle at 10% 20%, #001e3a, #000c1a);">
+<body>
 
 <div id="loadingScreen" class="loading-screen">
   <div class="loading-content">
-    <div class="text-5xl font-black tracking-wider mb-2">NUSA<span class="text-blue-400">FLOW</span></div>
-    <div class="text-xs opacity-80 mb-4">Koi Pond RDF System</div>
-    <div class="loading-bar"><div class="loading-progress" id="loadingProgress"></div></div>
-    <div class="mt-3 text-sm font-mono" id="loadingPercent">0%</div>
+    <div style="font-size: 2.8rem; font-weight: 800; letter-spacing: 2px;">NUSA<span style="color:#3b82f6;">FLOW</span></div>
+    <div style="font-size: 0.7rem; opacity:0.7; margin-top: 6px;">Koi Pond RDF System</div>
+    <div class="loading-bar"><div id="loadingProgress" class="loading-progress"></div></div>
+    <div style="margin-top: 10px; font-size:0.8rem;" id="loadingPercent">0%</div>
   </div>
 </div>
 
-<div id="app" class="min-h-screen p-4 md:p-6 opacity-0 transition-opacity duration-700"></div>
+<div id="app" style="opacity:0; transition: opacity 0.6s;"></div>
 
 <script>
-  (function() {
-    // ---------- LOADING SIMULATION ----------
+  (function(){
+    // ---------- LOADING ----------
     let progress = 0;
-    const loadingScreen = document.getElementById('loadingScreen');
-    const progressBar = document.getElementById('loadingProgress');
+    const loadingDiv = document.getElementById('loadingScreen');
+    const progBar = document.getElementById('loadingProgress');
     const percentSpan = document.getElementById('loadingPercent');
-    const loadingInterval = setInterval(() => {
-      progress += Math.random() * 15 + 5;
+    const interval = setInterval(() => {
+      progress += Math.random() * 12 + 5;
       if (progress >= 100) {
         progress = 100;
-        clearInterval(loadingInterval);
+        clearInterval(interval);
         setTimeout(() => {
-          loadingScreen.style.opacity = '0';
+          loadingDiv.style.opacity = '0';
           setTimeout(() => {
-            loadingScreen.style.display = 'none';
+            loadingDiv.style.display = 'none';
             document.getElementById('app').style.opacity = '1';
-          }, 600);
+          }, 500);
         }, 400);
       }
-      if (progressBar) progressBar.style.width = Math.min(progress, 100) + '%';
-      if (percentSpan) percentSpan.innerText = Math.floor(Math.min(progress, 100)) + '%';
+      if (progBar) progBar.style.width = Math.min(progress,100) + '%';
+      if (percentSpan) percentSpan.innerText = Math.floor(Math.min(progress,100)) + '%';
     }, 150);
 
-    // ---------- STATE (Sama seperti sebelumnya dengan tambahan produk) ----------
+    // ---------- STATE ----------
     let state = {
       rdfRunning: false,
       drumSpeed: 70,
       pumpOnlyMode: false,
       drumOnlyMode: false,
       aeratorOn: false,
-      uvLightOn: false,
+      uvOn: false,
       schedules: [],
       waterLevel: 'MEDIUM',
       drumCurrent: 0.8,
       voltage: 12.3,
       flowRate: 85,
       waterTemp: 26.5,
-      phValue: 7.2,
-      powerWatts: 0,
+      ph: 7.2,
+      power: 0,
       thresholds: { maxCurrent: 2.5, minPh: 6.0, maxPh: 8.5, maxTemp: 32 },
       logs: [],
       notifications: [],
       darkMode: true,
-      tempHistory: Array(30).fill(26.5),
-      phHistory: Array(30).fill(7.2),
-      voltageHistory: Array(30).fill(12.3),
-      labels: Array(30).fill('')
+      tempHistory: Array(20).fill(26.5),
+      phHistory: Array(20).fill(7.2),
+      voltHistory: Array(20).fill(12.3)
     };
 
-    let timerInterval = null, scheduleCheckInterval = null, sensorInterval = null, chartInstance = null;
+    let chart = null;
+    let sensorInterval = null;
+    let scheduleInterval = null;
 
-    // Helper functions (log, notif, beep, chart, dll) sama seperti sebelumnya
+    // Helper
     function addLog(action, detail) {
-      const time = new Date().toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
-      state.logs = [{ id: Date.now(), time, action, detail }, ...state.logs].slice(0, 50);
+      const t = new Date().toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
+      state.logs = [{ id: Date.now(), time: t, action, detail }, ...state.logs].slice(0, 40);
       updateLogUI();
     }
-    function addNotification(msg, type = 'info') {
+    function addNotif(msg, type='info') {
       const id = Date.now();
-      state.notifications = [...state.notifications, { id, msg, type }];
-      updateNotificationsUI();
+      state.notifications.push({ id, msg, type });
+      updateNotifUI();
       if (type === 'error') playBeep();
       setTimeout(() => {
         state.notifications = state.notifications.filter(n => n.id !== id);
-        updateNotificationsUI();
-      }, 4500);
+        updateNotifUI();
+      }, 4000);
     }
     function playBeep() {
       try {
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
+        const audio = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audio.createOscillator();
+        const gain = audio.createGain();
         osc.connect(gain);
-        gain.connect(audioCtx.destination);
+        gain.connect(audio.destination);
         osc.frequency.value = 880;
-        gain.gain.value = 0.2;
+        gain.gain.value = 0.15;
         osc.start();
-        gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.5);
-        osc.stop(audioCtx.currentTime + 0.5);
+        gain.gain.exponentialRampToValueAtTime(0.00001, audio.currentTime + 0.4);
+        osc.stop(audio.currentTime + 0.4);
       } catch(e) {}
     }
-    function updateChart() {
-      if (!chartInstance) return;
-      chartInstance.data.datasets[0].data = [...state.tempHistory];
-      chartInstance.data.datasets[1].data = [...state.phHistory];
-      chartInstance.data.datasets[2].data = [...state.voltageHistory];
-      chartInstance.update();
+
+    // Chart
+    function initChart() {
+      const ctx = document.getElementById('trendChart').getContext('2d');
+      chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: Array(20).fill(''),
+          datasets: [
+            { label: 'Suhu °C', data: state.tempHistory, borderColor: '#f97316', tension: 0.2, fill: false },
+            { label: 'pH', data: state.phHistory, borderColor: '#a855f7', tension: 0.2, fill: false, yAxisID: 'y1' },
+            { label: 'Tegangan V', data: state.voltHistory, borderColor: '#3b82f6', tension: 0.2, fill: false }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { position: 'top', labels: { color: '#fff' } } },
+          scales: { y: { title: { display: true, text: 'Suhu/Tegangan', color: '#aaa' } }, y1: { position: 'right', title: { text: 'pH', color: '#aaa' } } }
+        }
+      });
     }
     function pushHistory() {
       state.tempHistory.push(state.waterTemp);
-      state.phHistory.push(state.phValue);
-      state.voltageHistory.push(state.voltage);
-      if (state.tempHistory.length > 30) state.tempHistory.shift();
-      if (state.phHistory.length > 30) state.phHistory.shift();
-      if (state.voltageHistory.length > 30) state.voltageHistory.shift();
-      updateChart();
+      state.phHistory.push(state.ph);
+      state.voltHistory.push(state.voltage);
+      if (state.tempHistory.length > 20) state.tempHistory.shift();
+      if (state.phHistory.length > 20) state.phHistory.shift();
+      if (state.voltHistory.length > 20) state.voltHistory.shift();
+      if (chart) chart.update();
     }
-    function startSensorSimulation() {
+
+    // Simulasi sensor
+    function startSensorSim() {
       if (sensorInterval) clearInterval(sensorInterval);
       sensorInterval = setInterval(() => {
         // Level air
@@ -212,47 +299,63 @@
           else if (rand < 0.6) newLevel = 'MEDIUM';
           else newLevel = 'HIGH';
         } else {
-          const levels = ['LOW','MEDIUM','HIGH'];
-          newLevel = levels[Math.floor(Math.random()*3)];
+          const lvl = ['LOW','MEDIUM','HIGH'];
+          newLevel = lvl[Math.floor(Math.random()*3)];
         }
         state.waterLevel = newLevel;
         // Arus drum
         if (state.rdfRunning) {
-          let baseCurrent = 0.5 + (state.drumSpeed / 100) * 1.2;
-          state.drumCurrent = parseFloat((baseCurrent + Math.random() * 0.3).toFixed(2));
+          let base = 0.5 + (state.drumSpeed/100)*1.2;
+          state.drumCurrent = parseFloat((base + Math.random()*0.3).toFixed(2));
         } else {
-          state.drumCurrent = parseFloat((0.1 + Math.random() * 0.2).toFixed(2));
+          state.drumCurrent = parseFloat((0.1 + Math.random()*0.2).toFixed(2));
         }
+        // Tegangan
         state.voltage = parseFloat((Math.min(13.5, Math.max(11.0, state.voltage + (Math.random()-0.5)*0.1)).toFixed(1)));
-        let baseFlow = 0;
-        if (state.pumpOnlyMode || (!state.drumOnlyMode && state.rdfRunning)) baseFlow = 60 + Math.random() * 40;
-        else if (state.drumOnlyMode && state.rdfRunning) baseFlow = 20 + Math.random() * 20;
-        else baseFlow = 5 + Math.random() * 15;
-        state.flowRate = parseFloat(baseFlow.toFixed(1));
+        // Flow rate
+        let flow = 0;
+        if (state.pumpOnlyMode || (!state.drumOnlyMode && state.rdfRunning)) flow = 60 + Math.random()*40;
+        else if (state.drumOnlyMode && state.rdfRunning) flow = 20 + Math.random()*20;
+        else flow = 5 + Math.random()*15;
+        state.flowRate = parseFloat(flow.toFixed(1));
+        // Suhu
         state.waterTemp = parseFloat((state.waterTemp + (Math.random()-0.5)*0.15).toFixed(1));
-        state.phValue = parseFloat((state.phValue + (Math.random()-0.5)*0.04).toFixed(2));
-        state.powerWatts = parseFloat((state.voltage * state.drumCurrent).toFixed(1));
-        
-        if (state.drumCurrent > state.thresholds.maxCurrent) addNotification(`⚠️ Arus drum tinggi: ${state.drumCurrent}A`, 'error');
-        if (state.phValue < state.thresholds.minPh || state.phValue > state.thresholds.maxPh) addNotification(`⚠️ pH tidak ideal: ${state.phValue}`, 'error');
-        if (state.waterTemp > state.thresholds.maxTemp) addNotification(`🌡️ Suhu tinggi: ${state.waterTemp}°C`, 'error');
-        
+        // pH
+        state.ph = parseFloat((state.ph + (Math.random()-0.5)*0.05).toFixed(2));
+        // Daya
+        state.power = parseFloat((state.voltage * state.drumCurrent).toFixed(1));
+
+        if (state.drumCurrent > state.thresholds.maxCurrent) addNotif(`⚠️ Arus tinggi: ${state.drumCurrent}A`, 'error');
+        if (state.ph < state.thresholds.minPh || state.ph > state.thresholds.maxPh) addNotif(`⚠️ pH tidak normal: ${state.ph}`, 'error');
+        if (state.waterTemp > state.thresholds.maxTemp) addNotif(`🌡️ Suhu tinggi: ${state.waterTemp}°C`, 'error');
+
         pushHistory();
         updateSensorUI();
-        updateStatusAlerts();
+        updateAlerts();
         updateUI();
       }, 2500);
     }
-    function updateStatusAlerts() {
-      const currentCard = document.getElementById('sensorCurrentCard');
+
+    function updateSensorUI() {
+      const el = (id, val) => { let e = document.getElementById(id); if(e) e.innerText = val; };
+      el('sensorLevel', state.waterLevel);
+      el('sensorCurrent', state.drumCurrent + ' A');
+      el('sensorVoltage', state.voltage + ' V');
+      el('sensorFlow', state.flowRate + ' L/min');
+      el('sensorTemp', state.waterTemp + '°C');
+      el('sensorPH', state.ph);
+      el('powerWatts', state.power + ' W');
+    }
+    function updateAlerts() {
+      const currCard = document.getElementById('sensorCurrentCard');
       const phCard = document.getElementById('sensorPHCard');
       const tempCard = document.getElementById('sensorTempCard');
-      if (currentCard) {
-        if (state.drumCurrent > state.thresholds.maxCurrent) currentCard.classList.add('blink-red');
-        else currentCard.classList.remove('blink-red');
+      if (currCard) {
+        if (state.drumCurrent > state.thresholds.maxCurrent) currCard.classList.add('blink-red');
+        else currCard.classList.remove('blink-red');
       }
       if (phCard) {
-        if (state.phValue < state.thresholds.minPh || state.phValue > state.thresholds.maxPh) phCard.classList.add('blink-red');
+        if (state.ph < state.thresholds.minPh || state.ph > state.thresholds.maxPh) phCard.classList.add('blink-red');
         else phCard.classList.remove('blink-red');
       }
       if (tempCard) {
@@ -260,198 +363,250 @@
         else tempCard.classList.remove('blink-red');
       }
     }
-    function updateSensorUI() {
-      document.getElementById('sensorLevel') && (document.getElementById('sensorLevel').innerText = state.waterLevel);
-      document.getElementById('sensorCurrent') && (document.getElementById('sensorCurrent').innerText = state.drumCurrent + ' A');
-      document.getElementById('sensorVoltage') && (document.getElementById('sensorVoltage').innerText = state.voltage + ' V');
-      document.getElementById('sensorFlow') && (document.getElementById('sensorFlow').innerText = state.flowRate + ' L/min');
-      document.getElementById('sensorTemp') && (document.getElementById('sensorTemp').innerText = state.waterTemp + '°C');
-      document.getElementById('sensorPH') && (document.getElementById('sensorPH').innerText = state.phValue);
-      document.getElementById('powerWatts') && (document.getElementById('powerWatts').innerText = state.powerWatts + ' W');
-    }
     function updateLogUI() {
       const container = document.getElementById('logContainer');
       if (!container) return;
-      if (state.logs.length === 0) { container.innerHTML = '<div class="text-center opacity-50 text-sm">Belum ada aktivitas</div>'; return; }
-      container.innerHTML = state.logs.map(log => `<div class="flex gap-2 text-xs border-b border-white/10 py-2"><span class="text-blue-300 w-16">${log.time}</span><span class="font-semibold w-24">${log.action}:</span><span>${log.detail}</span></div>`).join('');
+      if (state.logs.length === 0) { container.innerHTML = '<div class="text-center opacity-50 text-xs">Belum ada aktivitas</div>'; return; }
+      container.innerHTML = state.logs.map(l => `<div class="flex gap-2 text-xs border-b border-white/10 py-2"><span class="text-blue-300 w-16">${l.time}</span><span class="font-semibold w-20">${l.action}:</span><span>${l.detail}</span></div>`).join('');
     }
-    function updateNotificationsUI() {
+    function updateNotifUI() {
       const container = document.getElementById('notifContainer');
       if (!container) return;
-      container.innerHTML = state.notifications.map(n => `<div class="toast fixed bottom-4 right-4 z-50 bg-black/80 backdrop-blur-md rounded-2xl px-4 py-2 flex items-center gap-2 text-sm border-l-4" style="border-left-color: ${n.type === 'error' ? '#ef4444' : n.type === 'success' ? '#22c55e' : '#3b82f6'}; animation: fadeInUp 0.3s ease;"><i class="fas ${n.type === 'error' ? 'fa-exclamation-triangle' : n.type === 'success' ? 'fa-check-circle' : 'fa-info-circle'}"></i>${n.msg}</div>`).join('');
+      container.innerHTML = state.notifications.map(n => `<div class="toast" style="border-left-color: ${n.type==='error'?'#ef4444':n.type==='success'?'#22c55e':'#3b82f6'}"><i class="fas ${n.type==='error'?'fa-exclamation-triangle':n.type==='success'?'fa-check-circle':'fa-info-circle'}"></i> ${n.msg}</div>`).join('');
     }
-    function exportLogs() { /* sama seperti sebelumnya */ if(state.logs.length===0) addNotification('Tidak ada log','info'); else { let csv=[["Waktu","Aksi","Detail"]]; state.logs.forEach(l=>csv.push([l.time,l.action,l.detail])); const blob=new Blob([csv.map(r=>r.join(",")).join("\n")],{type:"text/csv"}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`nusaflow_logs_${new Date().toISOString()}.csv`; a.click(); addLog('Export','Log diekspor'); } }
-    function toggleRdf() { if(state.pumpOnlyMode) setPumpOnly(false); if(state.drumOnlyMode) setDrumOnly(false); state.rdfRunning=!state.rdfRunning; addLog('Manual',`RDF ${state.rdfRunning?'ON':'OFF'}`); addNotification(`RDF ${state.rdfRunning?'ON':'OFF'}`,state.rdfRunning?'success':'error'); updateUI(); }
-    function setPumpOnly(enable){ state.pumpOnlyMode=enable; if(enable){ state.drumOnlyMode=false; state.rdfRunning=false; addLog('Mode','Pump Only aktif'); addNotification('Mode Pump Only','info'); } else { state.pumpOnlyMode=false; } updateUI(); }
-    function setDrumOnly(enable){ state.drumOnlyMode=enable; if(enable){ state.pumpOnlyMode=false; state.rdfRunning=true; addLog('Mode','Drum Only aktif'); addNotification('Mode Drum Only','info'); } else { state.drumOnlyMode=false; } updateUI(); }
-    function setNormalMode(){ state.pumpOnlyMode=false; state.drumOnlyMode=false; addLog('Mode','Mode Normal'); addNotification('Mode Normal','info'); updateUI(); }
-    function setDrumSpeed(val){ state.drumSpeed=parseInt(val); addLog('Kecepatan',`Drum speed ${state.drumSpeed}%`); updateUI(); }
-    function toggleAerator(){ state.aeratorOn=!state.aeratorOn; addLog('Aerator',state.aeratorOn?'ON':'OFF'); addNotification(`Aerator ${state.aeratorOn?'ON':'OFF`,'info'); updateUI(); }
-    function toggleUV(){ state.uvLightOn=!state.uvLightOn; addLog('UV Lamp',state.uvLightOn?'ON':'OFF'); addNotification(`UV Lamp ${state.uvLightOn?'ON':'OFF`,'info'); updateUI(); }
-    function emergencyStop(){ state.rdfRunning=false; state.pumpOnlyMode=false; state.drumOnlyMode=false; state.aeratorOn=false; state.uvLightOn=false; addLog('EMERGENCY','Semua mati'); addNotification('🚨 EMERGENCY STOP','error'); playBeep(); updateUI(); }
-    function addSchedule(hour,minute,onOff){ state.schedules.push({id:Date.now(),hour,minute,onOff}); addLog('Schedule',`Jadwal ${hour}:${minute} RDF ${onOff?'ON':'OFF'}`); updateScheduleUI(); }
-    function removeSchedule(id){ state.schedules=state.schedules.filter(s=>s.id!==id); addLog('Schedule','Hapus jadwal'); updateScheduleUI(); }
-    function clearSchedules(){ state.schedules=[]; addLog('Schedule','Semua jadwal dihapus'); updateScheduleUI(); }
-    function startScheduleChecker(){ if(scheduleCheckInterval) clearInterval(scheduleCheckInterval); scheduleCheckInterval=setInterval(()=>{ const now=new Date(); const curHour=now.getHours(), curMin=now.getMinutes(); state.schedules.forEach(s=>{ if(s.hour===curHour && s.minute===curMin){ if(s.onOff && !state.rdfRunning) toggleRdf(); else if(!s.onOff && state.rdfRunning) toggleRdf(); addLog('Schedule',`Eksekusi jadwal ${s.hour}:${s.minute} -> RDF ${s.onOff?'ON':'OFF'}`); } }); },60000); }
-    function openSettingsModal(){ let newMax=prompt('Max arus (A):',state.thresholds.maxCurrent); let newMinPh=prompt('Min pH:',state.thresholds.minPh); let newMaxPh=prompt('Max pH:',state.thresholds.maxPh); let newTemp=prompt('Max suhu (°C):',state.thresholds.maxTemp); if(newMax) state.thresholds.maxCurrent=parseFloat(newMax); if(newMinPh) state.thresholds.minPh=parseFloat(newMinPh); if(newMaxPh) state.thresholds.maxPh=parseFloat(newMaxPh); if(newTemp) state.thresholds.maxTemp=parseFloat(newTemp); addLog('Settings','Threshold diperbarui'); addNotification('Threshold disimpan','success'); }
-    function toggleTheme(){ state.darkMode=!state.darkMode; const body=document.body; if(state.darkMode){ body.style.background="radial-gradient(circle at 10% 20%, #001e3a, #000c1a)"; } else { body.style.background="#e0f2fe"; } updateUI(); }
-    function resetSystem(){ state.rdfRunning=false; state.pumpOnlyMode=false; state.drumOnlyMode=false; state.aeratorOn=false; state.uvLightOn=false; state.schedules=[]; state.drumSpeed=70; addLog('System','Reset semua'); addNotification('System direset','success'); updateUI(); updateScheduleUI(); }
-    function updateUI(){
-      const rdfStatus=document.getElementById('rdfStatus'); if(rdfStatus){ rdfStatus.innerText=state.rdfRunning?'BERJALAN':'BERHENTI'; rdfStatus.className=`px-3 py-1 rounded-full text-xs font-bold ${state.rdfRunning?'bg-green-500/40 text-green-200':'bg-red-500/40 text-red-200'}`; }
-      const pumpBtn=document.getElementById('btnPumpOnly'), drumBtn=document.getElementById('btnDrumOnly'), normalBtn=document.getElementById('btnNormal');
-      if(pumpBtn) pumpBtn.classList.toggle('bg-cyan-600',state.pumpOnlyMode);
-      if(drumBtn) drumBtn.classList.toggle('bg-cyan-600',state.drumOnlyMode);
-      if(normalBtn) normalBtn.classList.toggle('bg-cyan-600',!state.pumpOnlyMode && !state.drumOnlyMode);
-      const speedSlider=document.getElementById('drumSpeedSlider'), speedVal=document.getElementById('speedValue');
-      if(speedSlider) speedSlider.value=state.drumSpeed;
-      if(speedVal) speedVal.innerText=state.drumSpeed+'%';
-      const aeratorBtn=document.getElementById('aeratorBtn'), uvBtn=document.getElementById('uvBtn');
-      if(aeratorBtn){ aeratorBtn.innerHTML=`<i class="fas fa-fan"></i> Aerator ${state.aeratorOn?'ON':'OFF'}`; aeratorBtn.classList.toggle('bg-green-600',state.aeratorOn); }
-      if(uvBtn){ uvBtn.innerHTML=`<i class="fas fa-sun"></i> UV Lamp ${state.uvLightOn?'ON':'OFF'}`; uvBtn.classList.toggle('bg-purple-600',state.uvLightOn); }
-      const modeInfo=document.getElementById('modeInfo'); if(modeInfo){ if(state.pumpOnlyMode) modeInfo.innerText='Pump Only'; else if(state.drumOnlyMode) modeInfo.innerText='Drum Only'; else if(state.schedules.length>0) modeInfo.innerText='Scheduled'; else modeInfo.innerText='Manual'; }
-      const themeIcon=document.getElementById('themeIcon'); if(themeIcon) themeIcon.className=`fas ${state.darkMode?'fa-sun':'fa-moon'}`;
-      const powerEl=document.getElementById('powerWatts'); if(powerEl) powerEl.innerText=state.powerWatts+' W';
+    function updateUI() {
+      const rdfStatus = document.getElementById('rdfStatus');
+      if (rdfStatus) {
+        rdfStatus.innerText = state.rdfRunning ? 'BERJALAN' : 'BERHENTI';
+        rdfStatus.className = `px-3 py-1 rounded-full text-xs font-bold ${state.rdfRunning ? 'bg-green-500/40' : 'bg-red-500/40'}`;
+      }
+      const pumpBtn = document.getElementById('btnPumpOnly');
+      const drumBtn = document.getElementById('btnDrumOnly');
+      const normalBtn = document.getElementById('btnNormal');
+      if (pumpBtn) pumpBtn.classList.toggle('bg-cyan-600', state.pumpOnlyMode);
+      if (drumBtn) drumBtn.classList.toggle('bg-cyan-600', state.drumOnlyMode);
+      if (normalBtn) normalBtn.classList.toggle('bg-cyan-600', !state.pumpOnlyMode && !state.drumOnlyMode);
+      const speedSlider = document.getElementById('drumSpeedSlider');
+      const speedVal = document.getElementById('speedValue');
+      if (speedSlider) speedSlider.value = state.drumSpeed;
+      if (speedVal) speedVal.innerText = state.drumSpeed + '%';
+      const aeratorBtn = document.getElementById('aeratorBtn');
+      const uvBtn = document.getElementById('uvBtn');
+      if (aeratorBtn) { aeratorBtn.innerHTML = `<i class="fas fa-fan"></i> Aerator ${state.aeratorOn?'ON':'OFF'}`; aeratorBtn.classList.toggle('bg-green-600', state.aeratorOn); }
+      if (uvBtn) { uvBtn.innerHTML = `<i class="fas fa-sun"></i> UV Lamp ${state.uvOn?'ON':'OFF'}`; uvBtn.classList.toggle('bg-purple-600', state.uvOn); }
+      const modeInfo = document.getElementById('modeInfo');
+      if (modeInfo) {
+        if (state.pumpOnlyMode) modeInfo.innerText = 'Pump Only';
+        else if (state.drumOnlyMode) modeInfo.innerText = 'Drum Only';
+        else if (state.schedules.length > 0) modeInfo.innerText = 'Scheduled';
+        else modeInfo.innerText = 'Manual';
+      }
     }
-    function updateScheduleUI(){
-      const container=document.getElementById('scheduleList'); if(!container) return;
-      if(state.schedules.length===0){ container.innerHTML='<div class="text-center text-xs opacity-60">Belum ada jadwal</div>'; return; }
-      container.innerHTML=state.schedules.map(s=>`<div class="flex justify-between items-center bg-white/10 rounded-lg p-2 mb-2"><span class="text-sm font-mono">${s.hour.toString().padStart(2,'0')}:${s.minute.toString().padStart(2,'0')} → RDF ${s.onOff?'ON':'OFF'}</span><button onclick="window.removeScheduleById(${s.id})" class="text-red-400 text-xs"><i class="fas fa-trash"></i></button></div>`).join('');
+
+    // Kontrol
+    function toggleRdf() {
+      if (state.pumpOnlyMode) setPumpOnly(false);
+      if (state.drumOnlyMode) setDrumOnly(false);
+      state.rdfRunning = !state.rdfRunning;
+      addLog('Manual', `RDF ${state.rdfRunning ? 'ON' : 'OFF'}`);
+      addNotif(`RDF ${state.rdfRunning ? 'ON' : 'OFF'}`, state.rdfRunning ? 'success' : 'error');
+      updateUI();
     }
-    window.removeScheduleById = (id) => removeSchedule(id);
+    function setPumpOnly(enable) {
+      state.pumpOnlyMode = enable;
+      if (enable) { state.drumOnlyMode = false; state.rdfRunning = false; addLog('Mode', 'Pump Only aktif'); addNotif('Mode Pump Only', 'info'); }
+      updateUI();
+    }
+    function setDrumOnly(enable) {
+      state.drumOnlyMode = enable;
+      if (enable) { state.pumpOnlyMode = false; state.rdfRunning = true; addLog('Mode', 'Drum Only aktif'); addNotif('Mode Drum Only', 'info'); }
+      updateUI();
+    }
+    function setNormalMode() { state.pumpOnlyMode = false; state.drumOnlyMode = false; addLog('Mode', 'Mode Normal'); addNotif('Mode Normal', 'info'); updateUI(); }
+    function setDrumSpeed(val) { state.drumSpeed = parseInt(val); addLog('Kecepatan', `Drum ${state.drumSpeed}%`); updateUI(); }
+    function toggleAerator() { state.aeratorOn = !state.aeratorOn; addLog('Aerator', state.aeratorOn ? 'ON' : 'OFF'); addNotif(`Aerator ${state.aeratorOn?'ON':'OFF'}`); updateUI(); }
+    function toggleUV() { state.uvOn = !state.uvOn; addLog('UV Lamp', state.uvOn ? 'ON' : 'OFF'); addNotif(`UV Lamp ${state.uvOn?'ON':'OFF'}`); updateUI(); }
+    function emergencyStop() {
+      state.rdfRunning = false; state.pumpOnlyMode = false; state.drumOnlyMode = false; state.aeratorOn = false; state.uvOn = false;
+      addLog('EMERGENCY', 'Semua perangkat mati!'); addNotif('🚨 EMERGENCY STOP', 'error'); playBeep(); updateUI();
+    }
+    function resetSystem() {
+      state.rdfRunning = false; state.pumpOnlyMode = false; state.drumOnlyMode = false; state.aeratorOn = false; state.uvOn = false;
+      state.schedules = []; state.drumSpeed = 70;
+      addLog('System', 'Reset semua'); addNotif('System direset', 'success');
+      updateUI(); updateScheduleUI();
+    }
+    function exportLogs() {
+      if (state.logs.length === 0) { addNotif('Tidak ada log', 'info'); return; }
+      let csv = [["Waktu","Aksi","Detail"]];
+      state.logs.forEach(l => csv.push([l.time, l.action, l.detail]));
+      const blob = new Blob([csv.map(r=>r.join(",")).join("\n")], {type:"text/csv"});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `nusaflow_logs_${Date.now()}.csv`;
+      a.click(); URL.revokeObjectURL(a.href);
+      addLog('Export', 'Log diekspor');
+    }
+    function openSettings() {
+      let mc = prompt('Max arus (A):', state.thresholds.maxCurrent);
+      let minph = prompt('Min pH:', state.thresholds.minPh);
+      let maxph = prompt('Max pH:', state.thresholds.maxPh);
+      let mt = prompt('Max suhu (°C):', state.thresholds.maxTemp);
+      if (mc) state.thresholds.maxCurrent = parseFloat(mc);
+      if (minph) state.thresholds.minPh = parseFloat(minph);
+      if (maxph) state.thresholds.maxPh = parseFloat(maxph);
+      if (mt) state.thresholds.maxTemp = parseFloat(mt);
+      addLog('Settings', 'Threshold diperbarui'); addNotif('Threshold disimpan', 'success');
+    }
+
+    // Schedule
+    function addSchedule(hour, minute, onOff) {
+      state.schedules.push({ id: Date.now(), hour, minute, onOff });
+      addLog('Schedule', `Jadwal ${hour}:${minute} RDF ${onOff?'ON':'OFF'}`);
+      updateScheduleUI();
+    }
+    function removeSchedule(id) {
+      state.schedules = state.schedules.filter(s => s.id !== id);
+      updateScheduleUI();
+    }
+    function clearSchedules() {
+      state.schedules = [];
+      updateScheduleUI();
+      addLog('Schedule', 'Semua jadwal dihapus');
+    }
+    function updateScheduleUI() {
+      const container = document.getElementById('scheduleList');
+      if (!container) return;
+      if (state.schedules.length === 0) { container.innerHTML = '<div class="text-center text-xs opacity-60">Belum ada jadwal</div>'; return; }
+      container.innerHTML = state.schedules.map(s => `
+        <div class="flex justify-between items-center bg-white/10 rounded-lg p-2 mb-2">
+          <span class="text-sm font-mono">${s.hour.toString().padStart(2,'0')}:${s.minute.toString().padStart(2,'0')} → ${s.onOff ? 'ON' : 'OFF'}</span>
+          <button onclick="window.removeSchedule(${s.id})" class="text-red-400 text-xs"><i class="fas fa-trash"></i></button>
+        </div>
+      `).join('');
+    }
+    window.removeSchedule = removeSchedule;
     window.addScheduleFromUI = () => {
-      const hour=parseInt(document.getElementById('scheduleHour').value);
-      const minute=parseInt(document.getElementById('scheduleMinute').value);
-      const onOff=document.getElementById('scheduleAction').value==='on';
-      if(!isNaN(hour) && !isNaN(minute) && hour>=0 && hour<=23 && minute>=0 && minute<=59) addSchedule(hour,minute,onOff);
+      const hour = parseInt(document.getElementById('scheduleHour').value);
+      const min = parseInt(document.getElementById('scheduleMinute').value);
+      const onOff = document.getElementById('scheduleAction').value === 'on';
+      if (!isNaN(hour) && !isNaN(min) && hour>=0 && hour<=23 && min>=0 && min<=59) addSchedule(hour, min, onOff);
     };
-    function initChart(){
-      const ctx=document.getElementById('trendChart').getContext('2d');
-      chartInstance=new Chart(ctx,{
-        type:'line',
-        data:{ labels:state.labels, datasets:[
-          { label:'Suhu (°C)', data:state.tempHistory, borderColor:'#f97316', backgroundColor:'transparent', tension:0.2, fill:false },
-          { label:'pH', data:state.phHistory, borderColor:'#a855f7', backgroundColor:'transparent', tension:0.2, fill:false, yAxisID:'y1' },
-          { label:'Tegangan (V)', data:state.voltageHistory, borderColor:'#3b82f6', backgroundColor:'transparent', tension:0.2, fill:false }
-        ] },
-        options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'top', labels:{ color:state.darkMode?'white':'black' } } }, scales:{ y:{ title:{ display:true, text:'Suhu / Tegangan', color:'#ccc' } }, y1:{ position:'right', title:{ text:'pH', color:'#ccc' } } } }
-      });
+    function startScheduleChecker() {
+      if (scheduleInterval) clearInterval(scheduleInterval);
+      scheduleInterval = setInterval(() => {
+        const now = new Date();
+        const curHour = now.getHours(), curMin = now.getMinutes();
+        state.schedules.forEach(s => {
+          if (s.hour === curHour && s.minute === curMin) {
+            if (s.onOff && !state.rdfRunning) toggleRdf();
+            else if (!s.onOff && state.rdfRunning) toggleRdf();
+            addLog('Schedule', `Eksekusi jadwal ${s.hour}:${s.minute}`);
+          }
+        });
+      }, 60000);
     }
-    // Render utama dengan katalog produk (3 produk)
-    function renderApp(){
-      const app=document.getElementById('app');
-      app.innerHTML=`
-        <div class="max-w-7xl mx-auto">
-          <!-- Header with emergency & theme -->
-          <div class="glass-card p-5 mb-6 flex flex-wrap justify-between items-center gap-4">
-            <div><h1 class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-300 to-cyan-200 bg-clip-text text-transparent">NusaFlow Koi Pro</h1><p class="text-xs opacity-70">RDF Smart Control + Catalog</p></div>
-            <div class="flex gap-2"><button id="emergencyBtn" class="emergency-btn bg-red-600 px-4 py-2 rounded-full text-sm font-bold"><i class="fas fa-exclamation-triangle"></i> EMERGENCY STOP</button><button id="themeBtn" class="bg-white/10 px-3 py-2 rounded-full"><i id="themeIcon" class="fas fa-sun"></i></button></div>
+
+    // Render HTML
+    function render() {
+      const app = document.getElementById('app');
+      app.innerHTML = `
+        <div class="max-w-6xl mx-auto">
+          <!-- Header -->
+          <div class="glass p-4 mb-5 flex flex-wrap justify-between items-center gap-3">
+            <div><h1 class="text-2xl font-bold bg-gradient-to-r from-blue-300 to-cyan-200 bg-clip-text text-transparent">NusaFlow Koi</h1><p class="text-xs opacity-70">RDF Smart Control</p></div>
+            <div class="flex gap-2"><button id="emergencyBtn" class="emergency-btn bg-red-600 px-4 py-2 rounded-full text-sm"><i class="fas fa-exclamation-triangle"></i> STOP</button><button id="themeBtn" class="bg-white/10 px-3 py-2 rounded-full"><i class="fas fa-sun"></i></button></div>
           </div>
-          
-          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- Kiri: Kontrol (sama seperti sebelumnya) -->
-            <div class="space-y-5">
-              <div class="glass-card p-5"><h3 class="font-semibold mb-3"><i class="fas fa-water-pump"></i> RDF Drum</h3><div class="flex justify-between mb-4"><span>Status</span><span id="rdfStatus" class="px-3 py-1 rounded-full text-xs bg-red-500/40">BERHENTI</span></div><button id="toggleRdfBtn" class="w-full bg-blue-600 py-2 rounded-full mb-3"><i class="fas fa-play"></i> Nyalakan RDF</button><div class="mt-3"><label class="text-sm">Kecepatan Drum: <span id="speedValue">70%</span></label><input type="range" id="drumSpeedSlider" min="0" max="100" value="70" class="w-full"></div></div>
-              <div class="glass-card p-5"><h3 class="font-semibold mb-3"><i class="fas fa-sliders-h"></i> Mode Operasi</h3><div class="flex flex-wrap gap-2"><button id="btnPumpOnly" class="flex-1 py-2 rounded-full bg-white/10"><i class="fas fa-tint"></i> Pump Only</button><button id="btnDrumOnly" class="flex-1 py-2 rounded-full bg-white/10"><i class="fas fa-cogs"></i> Drum Only</button><button id="btnNormal" class="flex-1 py-2 rounded-full bg-white/10"><i class="fas fa-sync-alt"></i> Normal</button></div><div class="mt-2 text-xs">Mode: <span id="modeInfo">Manual</span></div></div>
-              <div class="glass-card p-5"><h3 class="font-semibold mb-3"><i class="fas fa-clock"></i> Jadwal Timer</h3><div class="flex gap-2 mb-2"><input type="number" id="scheduleHour" placeholder="Jam" class="w-1/3 bg-black/30 rounded-full px-3 py-1"><input type="number" id="scheduleMinute" placeholder="Menit" class="w-1/3 bg-black/30 rounded-full px-3 py-1"><select id="scheduleAction" class="bg-black/30 rounded-full px-2"><option value="on">ON</option><option value="off">OFF</option></select><button id="addScheduleBtn" class="bg-blue-500 px-3 rounded-full">+</button></div><div id="scheduleList" class="max-h-32 overflow-y-auto"></div><button id="clearSchedulesBtn" class="text-xs text-red-300 mt-2">Hapus Semua</button></div>
-              <div class="glass-card p-5"><h3 class="font-semibold mb-3"><i class="fas fa-plug"></i> Perangkat Lain</h3><div class="flex gap-2"><button id="aeratorBtn" class="flex-1 py-2 rounded-full bg-white/10"><i class="fas fa-fan"></i> Aerator OFF</button><button id="uvBtn" class="flex-1 py-2 rounded-full bg-white/10"><i class="fas fa-sun"></i> UV Lamp OFF</button></div></div>
-              <button id="resetBtn" class="w-full bg-red-500/40 py-2 rounded-full"><i class="fas fa-undo-alt"></i> Reset System</button>
+
+          <div class="grid-2">
+            <!-- Kiri: Kontrol -->
+            <div class="space-y-4">
+              <div class="glass p-4"><h3 class="font-semibold mb-2"><i class="fas fa-water-pump"></i> RDF Drum</h3><div class="flex justify-between mb-3"><span>Status</span><span id="rdfStatus" class="px-3 py-1 rounded-full text-xs bg-red-500/40">BERHENTI</span></div><button id="toggleRdfBtn" class="w-full btn-primary py-2 rounded-full mb-3"><i class="fas fa-play"></i> Nyalakan RDF</button><label class="text-sm">Kecepatan: <span id="speedValue">70%</span></label><input type="range" id="drumSpeedSlider" min="0" max="100" value="70" class="w-full mt-1"></div>
+              <div class="glass p-4"><h3 class="font-semibold mb-2"><i class="fas fa-sliders-h"></i> Mode</h3><div class="flex gap-2 flex-wrap"><button id="btnPumpOnly" class="flex-1 py-2 rounded-full bg-white/10"><i class="fas fa-tint"></i> Pump Only</button><button id="btnDrumOnly" class="flex-1 py-2 rounded-full bg-white/10"><i class="fas fa-cogs"></i> Drum Only</button><button id="btnNormal" class="flex-1 py-2 rounded-full bg-white/10"><i class="fas fa-sync-alt"></i> Normal</button></div><div class="text-xs mt-2">Mode: <span id="modeInfo">Manual</span></div></div>
+              <div class="glass p-4"><h3 class="font-semibold mb-2"><i class="fas fa-clock"></i> Jadwal Timer</h3><div class="flex gap-1 mb-2"><input type="number" id="scheduleHour" placeholder="Jam" class="w-1/3 bg-black/30 rounded-full px-2 py-1 text-sm"><input type="number" id="scheduleMinute" placeholder="Menit" class="w-1/3 bg-black/30 rounded-full px-2 py-1 text-sm"><select id="scheduleAction" class="bg-black/30 rounded-full px-2 text-sm"><option value="on">ON</option><option value="off">OFF</option></select><button id="addScheduleBtn" class="bg-blue-500 px-3 rounded-full text-sm">+</button></div><div id="scheduleList" class="max-h-32 overflow-y-auto"></div><button id="clearSchedulesBtn" class="text-xs text-red-300 mt-2">Hapus Semua</button></div>
+              <div class="glass p-4"><h3 class="font-semibold mb-2"><i class="fas fa-plug"></i> Lainnya</h3><div class="flex gap-2"><button id="aeratorBtn" class="flex-1 py-2 rounded-full bg-white/10"><i class="fas fa-fan"></i> Aerator OFF</button><button id="uvBtn" class="flex-1 py-2 rounded-full bg-white/10"><i class="fas fa-sun"></i> UV Lamp OFF</button></div></div>
+              <button id="resetBtn" class="w-full bg-red-500/40 py-2 rounded-full"><i class="fas fa-undo-alt"></i> Reset</button>
               <button id="settingsBtn" class="w-full bg-gray-500/40 py-2 rounded-full"><i class="fas fa-cog"></i> Set Threshold</button>
-              <button id="exportLogBtn" class="w-full bg-green-600/40 py-2 rounded-full"><i class="fas fa-download"></i> Export Log CSV</button>
+              <button id="exportLogBtn" class="w-full bg-green-600/40 py-2 rounded-full"><i class="fas fa-download"></i> Export Log</button>
             </div>
-            
-            <!-- Kanan: Monitoring & Grafik + Katalog Produk -->
-            <div class="lg:col-span-2 space-y-5">
-              <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <div id="sensorLevelCard" class="glass-card p-3 text-center rounded-xl"><i class="fas fa-water"></i><div class="text-xl font-bold" id="sensorLevel">MEDIUM</div><div class="text-xs">Level Air</div></div>
-                <div id="sensorCurrentCard" class="glass-card p-3 text-center rounded-xl"><i class="fas fa-bolt"></i><div class="text-xl font-bold" id="sensorCurrent">0.8 A</div><div class="text-xs">Arus Drum</div></div>
-                <div class="glass-card p-3 text-center rounded-xl"><i class="fas fa-charging-station"></i><div class="text-xl font-bold" id="sensorVoltage">12.3 V</div><div class="text-xs">Tegangan</div></div>
-                <div class="glass-card p-3 text-center rounded-xl"><i class="fas fa-tachometer-alt"></i><div class="text-xl font-bold" id="sensorFlow">85 L/min</div><div class="text-xs">Flow Rate</div></div>
-                <div id="sensorTempCard" class="glass-card p-3 text-center rounded-xl"><i class="fas fa-thermometer-half"></i><div class="text-xl font-bold" id="sensorTemp">26.5°C</div><div class="text-xs">Suhu</div></div>
-                <div id="sensorPHCard" class="glass-card p-3 text-center rounded-xl"><i class="fas fa-flask"></i><div class="text-xl font-bold" id="sensorPH">7.2</div><div class="text-xs">pH</div></div>
-                <div class="glass-card p-3 text-center rounded-xl"><i class="fas fa-charging-station"></i><div class="text-xl font-bold" id="powerWatts">0 W</div><div class="text-xs">Daya</div></div>
-                <div class="glass-card p-3 text-center rounded-xl"><i class="fas fa-wifi"></i><div class="text-xl font-bold">Mock</div><div class="text-xs">ESP32</div></div>
+
+            <!-- Kanan: Monitoring & Katalog -->
+            <div class="space-y-4">
+              <div class="sensor-grid">
+                <div id="sensorLevelCard" class="glass p-2 text-center rounded-xl"><i class="fas fa-water"></i><div class="text-lg font-bold" id="sensorLevel">MEDIUM</div><div class="text-xs">Level Air</div></div>
+                <div id="sensorCurrentCard" class="glass p-2 text-center rounded-xl"><i class="fas fa-bolt"></i><div class="text-lg font-bold" id="sensorCurrent">0.8 A</div><div class="text-xs">Arus Drum</div></div>
+                <div class="glass p-2 text-center rounded-xl"><i class="fas fa-charging-station"></i><div class="text-lg font-bold" id="sensorVoltage">12.3 V</div><div class="text-xs">Tegangan</div></div>
+                <div class="glass p-2 text-center rounded-xl"><i class="fas fa-tachometer-alt"></i><div class="text-lg font-bold" id="sensorFlow">85 L/min</div><div class="text-xs">Flow Rate</div></div>
+                <div id="sensorTempCard" class="glass p-2 text-center rounded-xl"><i class="fas fa-thermometer-half"></i><div class="text-lg font-bold" id="sensorTemp">26.5°C</div><div class="text-xs">Suhu</div></div>
+                <div id="sensorPHCard" class="glass p-2 text-center rounded-xl"><i class="fas fa-flask"></i><div class="text-lg font-bold" id="sensorPH">7.2</div><div class="text-xs">pH</div></div>
+                <div class="glass p-2 text-center rounded-xl"><i class="fas fa-charging-station"></i><div class="text-lg font-bold" id="powerWatts">0 W</div><div class="text-xs">Daya</div></div>
+                <div class="glass p-2 text-center rounded-xl"><i class="fas fa-wifi"></i><div class="text-lg font-bold">Sim</div><div class="text-xs">ESP32</div></div>
               </div>
-              
-              <div class="glass-card p-4"><h3 class="font-semibold mb-2"><i class="fas fa-chart-line"></i> Tren Sensor (30 titik)</h3><div class="h-64"><canvas id="trendChart"></canvas></div></div>
-              
-              <!-- KATALOG PRODUK (mirip Instagram) -->
-              <div class="glass-card p-5">
-                <h3 class="font-semibold text-xl mb-4 flex items-center gap-2"><i class="fab fa-instagram"></i> Katalog Produk RDF</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
-                  <!-- Produk 1 ton -->
-                  <div class="product-card glass-card p-4 text-center rounded-2xl" onclick="window.showProductDetail('1 ton')">
-                    <div class="w-full h-40 bg-gray-800 rounded-xl flex items-center justify-center overflow-hidden">
-                      <img id="img1ton" src="https://via.placeholder.com/300x200?text=RDF+1+Ton" alt="RDF 1 Ton" class="w-full h-full object-cover">
-                    </div>
-                    <h4 class="font-bold mt-3">RDF 1 Ton</h4>
-                    <p class="text-xs opacity-70">Kapasitas 1000L, ideal kolam kecil</p>
-                    <div class="mt-2 text-blue-300 text-sm"><i class="fas fa-tag"></i> Harga: Call</div>
+
+              <div class="glass p-3"><h3 class="font-semibold text-sm mb-2"><i class="fas fa-chart-line"></i> Tren Sensor</h3><div class="h-48"><canvas id="trendChart"></canvas></div></div>
+
+              <!-- Katalog produk mirip Instagram -->
+              <div class="glass p-4">
+                <h3 class="font-semibold mb-3 flex items-center gap-2"><i class="fab fa-instagram"></i> Katalog RDF</h3>
+                <div class="product-grid">
+                  <div class="product-card glass p-2 text-center" onclick="window.showProduct('1 Ton')">
+                    <div class="h-28 bg-gray-700 rounded-xl flex items-center justify-center text-2xl">📦</div>
+                    <div class="font-bold mt-1">RDF 1 Ton</div>
+                    <div class="text-xs opacity-70">Kapasitas 1000L</div>
                   </div>
-                  <!-- Produk 3 ton -->
-                  <div class="product-card glass-card p-4 text-center rounded-2xl" onclick="window.showProductDetail('3 ton')">
-                    <div class="w-full h-40 bg-gray-800 rounded-xl flex items-center justify-center">
-                      <img id="img3ton" src="https://via.placeholder.com/300x200?text=RDF+3+Ton" alt="RDF 3 Ton" class="w-full h-full object-cover">
-                    </div>
-                    <h4 class="font-bold mt-3">RDF 3 Ton</h4>
-                    <p class="text-xs opacity-70">Kapasitas 3000L, untuk kolam menengah</p>
-                    <div class="mt-2 text-blue-300 text-sm"><i class="fas fa-tag"></i> Harga: Call</div>
+                  <div class="product-card glass p-2 text-center" onclick="window.showProduct('3 Ton')">
+                    <div class="h-28 bg-gray-700 rounded-xl flex items-center justify-center text-2xl">📦</div>
+                    <div class="font-bold mt-1">RDF 3 Ton</div>
+                    <div class="text-xs opacity-70">Kapasitas 3000L</div>
                   </div>
-                  <!-- Produk 5 ton -->
-                  <div class="product-card glass-card p-4 text-center rounded-2xl" onclick="window.showProductDetail('5 ton')">
-                    <div class="w-full h-40 bg-gray-800 rounded-xl flex items-center justify-center">
-                      <img id="img5ton" src="https://via.placeholder.com/300x200?text=RDF+5+Ton" alt="RDF 5 Ton" class="w-full h-full object-cover">
-                    </div>
-                    <h4 class="font-bold mt-3">RDF 5 Ton</h4>
-                    <p class="text-xs opacity-70">Kapasitas 5000L, untuk kolam besar</p>
-                    <div class="mt-2 text-blue-300 text-sm"><i class="fas fa-tag"></i> Harga: Call</div>
+                  <div class="product-card glass p-2 text-center" onclick="window.showProduct('5 Ton')">
+                    <div class="h-28 bg-gray-700 rounded-xl flex items-center justify-center text-2xl">📦</div>
+                    <div class="font-bold mt-1">RDF 5 Ton</div>
+                    <div class="text-xs opacity-70">Kapasitas 5000L</div>
                   </div>
                 </div>
-                <div class="text-center text-xs opacity-50 mt-4">Klik card untuk info lebih lanjut (simulasi)</div>
+                <p class="text-center text-[10px] opacity-50 mt-2">Klik untuk info (simulasi)</p>
               </div>
-              
-              <div class="glass-card p-4"><div class="flex justify-between mb-2"><h3 class="font-semibold"><i class="fas fa-list-alt"></i> Log Aktivitas</h3><button id="clearLogBtn" class="text-xs bg-white/10 px-2 py-1 rounded-full">Clear</button></div><div id="logContainer" class="h-48 overflow-y-auto"></div></div>
+
+              <div class="glass p-3"><div class="flex justify-between"><h3 class="font-semibold text-sm"><i class="fas fa-list-alt"></i> Log</h3><button id="clearLogBtn" class="text-xs bg-white/10 px-2 py-1 rounded-full">Clear</button></div><div id="logContainer" class="h-40 overflow-y-auto mt-2"></div></div>
             </div>
           </div>
-          <div class="text-center text-[10px] opacity-40 mt-6">NusaFlow Koi Pro • RDF Founder Edition • Real-time Simulation • Katalog Produk</div>
+          <div class="text-center text-[10px] opacity-40 mt-5">NusaFlow Koi Pro • RDF Founder Edition • Simulasi</div>
         </div>
         <div id="notifContainer"></div>
       `;
-      
-      // Pasang event listener
+
+      // Event listeners
       document.getElementById('toggleRdfBtn')?.addEventListener('click', toggleRdf);
-      document.getElementById('btnPumpOnly')?.addEventListener('click', ()=>setPumpOnly(true));
-      document.getElementById('btnDrumOnly')?.addEventListener('click', ()=>setDrumOnly(true));
+      document.getElementById('btnPumpOnly')?.addEventListener('click', () => setPumpOnly(true));
+      document.getElementById('btnDrumOnly')?.addEventListener('click', () => setDrumOnly(true));
       document.getElementById('btnNormal')?.addEventListener('click', setNormalMode);
       document.getElementById('emergencyBtn')?.addEventListener('click', emergencyStop);
-      document.getElementById('themeBtn')?.addEventListener('click', toggleTheme);
-      document.getElementById('drumSpeedSlider')?.addEventListener('input', (e)=>setDrumSpeed(e.target.value));
+      document.getElementById('themeBtn')?.addEventListener('click', () => { state.darkMode = !state.darkMode; document.body.style.background = state.darkMode ? 'radial-gradient(circle at 10% 20%, #001d3d, #000b17)' : '#e0f2fe'; });
+      document.getElementById('drumSpeedSlider')?.addEventListener('input', (e) => setDrumSpeed(e.target.value));
       document.getElementById('aeratorBtn')?.addEventListener('click', toggleAerator);
       document.getElementById('uvBtn')?.addEventListener('click', toggleUV);
       document.getElementById('resetBtn')?.addEventListener('click', resetSystem);
-      document.getElementById('settingsBtn')?.addEventListener('click', openSettingsModal);
+      document.getElementById('settingsBtn')?.addEventListener('click', openSettings);
       document.getElementById('exportLogBtn')?.addEventListener('click', exportLogs);
-      document.getElementById('clearLogBtn')?.addEventListener('click', ()=>{ state.logs=[]; updateLogUI(); });
-      document.getElementById('addScheduleBtn')?.addEventListener('click', ()=>window.addScheduleFromUI());
+      document.getElementById('clearLogBtn')?.addEventListener('click', () => { state.logs = []; updateLogUI(); });
+      document.getElementById('addScheduleBtn')?.addEventListener('click', () => window.addScheduleFromUI());
       document.getElementById('clearSchedulesBtn')?.addEventListener('click', clearSchedules);
-      
-      // Ganti gambar placeholder dengan link yang bisa diubah nanti
-      // Jika Anda punya link gambar sendiri, ganti src di atas atau di sini
-      // Contoh: document.getElementById('img1ton').src = "URL_GAMBAR_ANDA";
-      
+
       updateUI();
       updateSensorUI();
       updateLogUI();
       updateScheduleUI();
       initChart();
-      startSensorSimulation();
+      startSensorSim();
       startScheduleChecker();
     }
-    
-    window.showProductDetail = (product) => {
-      addNotification(`Detail produk RDF ${product} - Hubungi CS untuk info lebih lanjut`, 'info');
+
+    window.showProduct = (name) => {
+      addNotif(`Produk RDF ${name} - Hubungi CS untuk detail`, 'info');
     };
-    
-    renderApp();
+
+    render();
   })();
 </script>
 </body>
